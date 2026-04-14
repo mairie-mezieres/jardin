@@ -1,134 +1,103 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Mon Potager Intelligent</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Potager IA Ultime</title>
 
-<link rel="manifest" href="manifest.json"/>
-<meta name="theme-color" content="#2e7d32"/>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b5e20">
 
 <style>
-body{font-family:Arial;margin:0;background:#f4f8f4;}
-header{background:#2e7d32;color:white;padding:15px;text-align:center;}
-.container{padding:15px;}
-.card{background:white;padding:15px;margin-bottom:10px;border-radius:12px;}
-button{padding:10px;border:none;background:#2e7d32;color:white;border-radius:8px;}
+body{font-family:Arial;margin:0;background:#f3f8f4;}
+header{background:#145a32;color:white;padding:14px;text-align:center;}
+.container{padding:12px;}
+.card{background:white;padding:12px;margin-bottom:10px;border-radius:12px;}
+
+.calendar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.month{background:white;padding:12px;border-radius:10px;text-align:center;font-weight:bold;cursor:pointer;}
+.month:hover{background:#dff5e1;}
+
+.alert{padding:10px;border-radius:8px;font-weight:bold;margin-top:8px;}
+.good{background:#e8f5e9;color:#1b5e20;}
+.warn{background:#fff3e0;color:#e65100;}
+.danger{background:#ffebee;color:#b71c1c;}
+
+button{padding:10px;border:none;border-radius:8px;background:#1b5e20;color:white;cursor:pointer;}
 </style>
 </head>
 
 <body>
 
-<header>
-🌱 Mon Potager Intelligent<br>
-<span id="clock"></span>
-</header>
+<header>🌱 Potager IA Ultime</header>
 
 <div class="container">
 
 <div class="card">
-<h2>Météo 🌦</h2>
-<p id="weather">Chargement...</p>
+<h3>🌦 Météo + Gel IA</h3>
+<p id="meteo">Chargement...</p>
+<div id="alert"></div>
 </div>
 
 <div class="card">
-<h2>Recommandation</h2>
-<p id="reco"></p>
-<button onclick="getRecommendation()">Actualiser</button>
+<h3>🏡 Mode culture</h3>
+<button onclick="toggleMode()" id="modeBtn">Mode : Extérieur 🌿</button>
+<p id="modeTxt"></p>
 </div>
 
 <div class="card">
-<label><input type="checkbox" id="serre"> Serre</label>
-</div>
-
-<div class="card">
-<button onclick="askNotification()">Activer notifications 🔔</button>
+<h3>📅 Calendrier</h3>
+<div class="calendar" id="cal"></div>
 </div>
 
 </div>
 
 <script>
 
-const plantes={
-tomate:{serre:"février-mars",plein_air:"mai-juin"},
-carotte:{serre:"février-mars",plein_air:"mars-juillet"},
-salade:{serre:"janvier-mars",plein_air:"mars-septembre"}
-};
+let mode="ext";
+let lat=47.9, lon=1.9;
 
-// clock
-function updateClock(){
-document.getElementById("clock").innerText=new Date().toLocaleString('fr-FR');
-}
-setInterval(updateClock,1000);
-updateClock();
-
-// weather
-async function loadWeather(){
-try{
-const lat=47.9;
-const lon=1.9;
-
-const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
-const res=await fetch(url);
-const data=await res.json();
-
-const w=data.current_weather;
-
-document.getElementById("weather").innerText=
-`Temp: ${w.temperature}°C | Vent: ${w.windspeed} km/h | Heure: ${w.time}`;
-
-}catch(e){
-document.getElementById("weather").innerText="Erreur météo";
-}
-}
-loadWeather();
-
-// reco
-function getRecommendation(){
-const serre=document.getElementById("serre").checked;
-const mois=new Date().toLocaleString('fr-FR',{month:'long'});
-
-let msg="Rien à faire";
-
-for(let p in plantes){
-let per=serre?plantes[p].serre:plantes[p].plein_air;
-if(per.includes(mois)){
-msg="Planter: "+p;
-break;
-}
+function toggleMode(){
+mode = mode==="ext"?"serre":"ext";
+document.getElementById("modeBtn").innerText =
+mode==="ext"?"Mode : Extérieur 🌿":"Mode : Serre 🏠";
+document.getElementById("modeTxt").innerText =
+mode==="ext"?"Culture normale":"Culture protégée serre";
 }
 
-document.getElementById("reco").innerText=msg;
-}
-getRecommendation();
+async function weather(){
+const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=temperature_2m_min&timezone=auto`;
+const r=await fetch(url);
+const d=await r.json();
 
-// notifications
-function askNotification(){
+let t=d.current_weather.temperature;
+let n=d.daily.temperature_2m_min[0];
 
-if(!("Notification" in window)){
-alert("Notifications non supportées");
-return;
+let msg="", type="good";
+
+if(n<=0){msg="❄️ GEL CRITIQUE"; type="danger";}
+else if(n<=3){msg="⚠️ risque gel"; type="warn";}
+else{msg="🌱 OK jardin"; type="good";}
+
+document.getElementById("meteo").innerText=
+`Temp: ${t}°C | Nuit: ${n}°C`;
+
+document.getElementById("alert").innerHTML=
+`<div class='alert ${type}'>${msg}</div>`;
 }
 
-Notification.requestPermission().then(p=>{
-if(p==="granted"){
-new Notification("🌱 Potager activé",{body:"Notifications activées"});
-}
+weather();
+
+const cal=document.getElementById("cal");
+const months=["Jan","Fev","Mar","Avr","Mai","Jun","Jul","Aou","Sep","Oct","Nov","Dec"];
+
+months.forEach((m,i)=>{
+let d=document.createElement("div");
+d.className="month";
+d.innerText=m;
+d.onclick=()=>alert("Mois "+m);
+cal.appendChild(d);
 });
-}
-
-function sendTest(){
-if(Notification.permission==="granted"){
-new Notification("🌱 Potager",{body:"Pense à ton jardin"});
-}
-}
-
-setInterval(sendTest,60000);
-
-// service worker
-if("serviceWorker" in navigator){
-navigator.serviceWorker.register("service-worker.js");
-}
 
 </script>
 
