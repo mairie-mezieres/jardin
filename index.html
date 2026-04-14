@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mon Potager Intelligent</title>
+
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#2e7d32"/>
+
+<style>
+body{font-family:Arial;margin:0;background:#f4f8f4;}
+header{background:#2e7d32;color:white;padding:15px;text-align:center;}
+.container{padding:15px;}
+.card{background:white;padding:15px;margin-bottom:10px;border-radius:12px;}
+button{padding:10px;border:none;background:#2e7d32;color:white;border-radius:8px;}
+</style>
+</head>
+
+<body>
+
+<header>
+🌱 Mon Potager Intelligent<br>
+<span id="clock"></span>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>Météo 🌦</h2>
+<p id="weather">Chargement...</p>
+</div>
+
+<div class="card">
+<h2>Recommandation</h2>
+<p id="reco"></p>
+<button onclick="getRecommendation()">Actualiser</button>
+</div>
+
+<div class="card">
+<label><input type="checkbox" id="serre"> Serre</label>
+</div>
+
+<div class="card">
+<button onclick="askNotification()">Activer notifications 🔔</button>
+</div>
+
+</div>
+
+<script>
+
+const plantes={
+tomate:{serre:"février-mars",plein_air:"mai-juin"},
+carotte:{serre:"février-mars",plein_air:"mars-juillet"},
+salade:{serre:"janvier-mars",plein_air:"mars-septembre"}
+};
+
+// clock
+function updateClock(){
+document.getElementById("clock").innerText=new Date().toLocaleString('fr-FR');
+}
+setInterval(updateClock,1000);
+updateClock();
+
+// weather
+async function loadWeather(){
+try{
+const lat=47.9;
+const lon=1.9;
+
+const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+const res=await fetch(url);
+const data=await res.json();
+
+const w=data.current_weather;
+
+document.getElementById("weather").innerText=
+`Temp: ${w.temperature}°C | Vent: ${w.windspeed} km/h | Heure: ${w.time}`;
+
+}catch(e){
+document.getElementById("weather").innerText="Erreur météo";
+}
+}
+loadWeather();
+
+// reco
+function getRecommendation(){
+const serre=document.getElementById("serre").checked;
+const mois=new Date().toLocaleString('fr-FR',{month:'long'});
+
+let msg="Rien à faire";
+
+for(let p in plantes){
+let per=serre?plantes[p].serre:plantes[p].plein_air;
+if(per.includes(mois)){
+msg="Planter: "+p;
+break;
+}
+}
+
+document.getElementById("reco").innerText=msg;
+}
+getRecommendation();
+
+// notifications
+function askNotification(){
+
+if(!("Notification" in window)){
+alert("Notifications non supportées");
+return;
+}
+
+Notification.requestPermission().then(p=>{
+if(p==="granted"){
+new Notification("🌱 Potager activé",{body:"Notifications activées"});
+}
+});
+}
+
+function sendTest(){
+if(Notification.permission==="granted"){
+new Notification("🌱 Potager",{body:"Pense à ton jardin"});
+}
+}
+
+setInterval(sendTest,60000);
+
+// service worker
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("service-worker.js");
+}
+
+</script>
+
+</body>
+</html>

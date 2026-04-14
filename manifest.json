@@ -1,0 +1,8 @@
+{
+"name":"Mon Potager Intelligent",
+"short_name":"Potager",
+"start_url":".",
+"display":"standalone",
+"theme_color":"#2e7d32",
+"background_color":"#ffffff"
+}
