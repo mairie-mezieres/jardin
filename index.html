@@ -3,103 +3,1280 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Potager IA Ultime</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1b5e20">
-
+<title>Mon Jardin 🌱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-body{font-family:Arial;margin:0;background:#f3f8f4;}
-header{background:#145a32;color:white;padding:14px;text-align:center;}
-.container{padding:12px;}
-.card{background:white;padding:12px;margin-bottom:10px;border-radius:12px;}
+  :root {
+    --soil: #3d2b1f;
+    --bark: #6b4c35;
+    --moss: #4a5e3a;
+    --leaf: #6b8f47;
+    --sprout: #9db86b;
+    --sun: #e8c84a;
+    --flower: #d97b54;
+    --sky: #a8c5d6;
+    --paper: #f5f0e8;
+    --cream: #faf7f0;
+    --text: #2a1f14;
+    --muted: #8a7060;
+    --shade: rgba(61,43,31,0.08);
+    --rad: 12px;
+  }
 
-.calendar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.month{background:white;padding:12px;border-radius:10px;text-align:center;font-weight:bold;cursor:pointer;}
-.month:hover{background:#dff5e1;}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.alert{padding:10px;border-radius:8px;font-weight:bold;margin-top:8px;}
-.good{background:#e8f5e9;color:#1b5e20;}
-.warn{background:#fff3e0;color:#e65100;}
-.danger{background:#ffebee;color:#b71c1c;}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-button{padding:10px;border:none;border-radius:8px;background:#1b5e20;color:white;cursor:pointer;}
+  /* ── NAV ── */
+  nav {
+    background: var(--soil);
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--sun);
+    font-size: 1.1rem;
+    white-space: nowrap;
+    padding: 14px 20px 14px 0;
+    border-right: 1px solid rgba(255,255,255,.1);
+    margin-right: 8px;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .82rem;
+    font-weight: 500;
+    padding: 14px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .2s;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    position: relative;
+  }
+  .nav-btn.active, .nav-btn:hover { color: var(--sun); }
+  .nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 12px; right: 12px;
+    height: 2px;
+    background: var(--sun);
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* ── SECTIONS ── */
+  section { display: none; padding: 24px 16px 80px; max-width: 900px; margin: 0 auto; }
+  section.active { display: block; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    margin-bottom: 6px;
+    color: var(--soil);
+  }
+  .section-sub { color: var(--muted); font-size: .9rem; margin-bottom: 24px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border-radius: var(--rad);
+    padding: 18px;
+    box-shadow: 0 1px 6px var(--shade);
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-weight: 600;
+    font-size: .95rem;
+    margin-bottom: 12px;
+    color: var(--soil);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title span { font-size: 1.1rem; }
+
+  /* ── MOIS BADGES ── */
+  .months-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .m-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    background: var(--paper);
+    color: var(--muted);
+  }
+  .m-badge.sow { background: #d4eab8; color: #3a6b1a; }
+  .m-badge.plant { background: #ffe0b2; color: #a04000; }
+  .m-badge.harvest { background: #ffd6d6; color: #a02020; }
+  .months-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; font-size: .75rem; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* ── VEGETABLE GRID ── */
+  .veg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 12px;
+  }
+  .veg-card {
+    background: white;
+    border-radius: var(--rad);
+    overflow: hidden;
+    box-shadow: 0 1px 6px var(--shade);
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .veg-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px var(--shade); }
+  .veg-card .veg-emoji {
+    font-size: 2.4rem;
+    display: block;
+    text-align: center;
+    padding: 18px 8px 8px;
+    background: var(--paper);
+  }
+  .veg-card .veg-name {
+    padding: 8px 10px 10px;
+    font-size: .85rem;
+    font-weight: 600;
+  }
+  .veg-card .veg-tags {
+    padding: 0 10px 10px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: .65rem;
+    padding: 2px 6px;
+    border-radius: 20px;
+    background: var(--paper);
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .tag.sun { background: #fff8d4; color: #8a6200; }
+  .tag.half { background: #e8f4d4; color: #3a6b1a; }
+  .tag.shade { background: #d8ecf0; color: #1a5a6b; }
+  .tag.easy { background: #d4eab8; color: #2a5a0a; }
+  .tag.medium { background: #ffe8b2; color: #7a4400; }
+  .tag.hard { background: #ffd4d4; color: #7a1010; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(30,20,10,.6);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    width: 100%;
+    max-width: 600px;
+    max-height: 88vh;
+    border-radius: 20px 20px 0 0;
+    overflow-y: auto;
+    padding: 24px 20px 40px;
+    animation: slideUp .25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(60px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .modal-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 20px; }
+  .modal-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .modal-icon { font-size: 3rem; }
+  .modal-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--soil); }
+  .modal-latin { font-style: italic; color: var(--muted); font-size: .85rem; }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .info-cell {
+    background: var(--paper);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .info-cell .ic-label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+  .info-cell .ic-val { font-size: .9rem; font-weight: 600; color: var(--soil); }
+  .modal-desc { font-size: .9rem; line-height: 1.6; color: #555; margin-bottom: 18px; }
+  .modal-section-title { font-weight: 700; font-size: .85rem; color: var(--soil); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em; }
+  .companion-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+  .companion-tag { background: #e8f4d4; color: #2a5a0a; font-size: .8rem; padding: 4px 10px; border-radius: 20px; }
+  .enemy-tag { background: #ffd4d4; color: #7a1010; font-size: .8rem; padding: 4px 10px; border-radius: 20px; }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--paper);
+    border: none;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal { position: relative; }
+
+  /* ── SUIVI ── */
+  .add-sow-form {
+    background: white;
+    border-radius: var(--rad);
+    padding: 18px;
+    box-shadow: 0 1px 6px var(--shade);
+    margin-bottom: 20px;
+  }
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 130px; }
+  .form-group label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 500; }
+  .form-group select,
+  .form-group input {
+    padding: 9px 12px;
+    border: 1.5px solid #e0d8cc;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem;
+    background: var(--paper);
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .form-group select:focus,
+  .form-group input:focus { border-color: var(--leaf); }
+  .btn-add {
+    background: var(--moss);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+    align-self: flex-end;
+  }
+  .btn-add:hover { background: var(--leaf); }
+
+  .sow-list { display: flex; flex-direction: column; gap: 10px; }
+  .sow-item {
+    background: white;
+    border-radius: var(--rad);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 5px var(--shade);
+  }
+  .sow-icon { font-size: 1.6rem; }
+  .sow-info { flex: 1; }
+  .sow-name { font-weight: 600; font-size: .9rem; }
+  .sow-details { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+  .sow-progress { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 90px; }
+  .stage-badge {
+    font-size: .7rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .stage-0 { background: #e8f0ff; color: #2040b0; }
+  .stage-1 { background: #e8f4d4; color: #2a5a0a; }
+  .stage-2 { background: #fff4cc; color: #806000; }
+  .stage-3 { background: #ffe8d4; color: #803000; }
+  .stage-4 { background: #ffd4d4; color: #800000; }
+  .days-left { font-size: .72rem; color: var(--muted); }
+  .sow-delete {
+    background: none; border: none; color: #ccc; font-size: 1rem; cursor: pointer; padding: 4px;
+  }
+  .sow-delete:hover { color: #e55; }
+
+  /* ── CALENDRIER RÉCOLTES ── */
+  .harvest-calendar {
+    background: white;
+    border-radius: var(--rad);
+    padding: 18px;
+    box-shadow: 0 1px 6px var(--shade);
+    overflow-x: auto;
+  }
+  .hcal-table { width: 100%; border-collapse: collapse; min-width: 620px; }
+  .hcal-table th {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    padding: 6px 4px;
+    text-align: center;
+    font-weight: 600;
+  }
+  .hcal-table td { padding: 4px; font-size: .82rem; }
+  .hcal-table .veg-col { font-weight: 500; white-space: nowrap; padding-right: 8px; }
+  .hcal-cell {
+    width: 36px;
+    height: 24px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .hcal-cell.sow-m { background: #d4eab8; }
+  .hcal-cell.plant-m { background: #ffe0b2; }
+  .hcal-cell.harvest-m { background: #ffd6a0; }
+  .hcal-cell.best-harvest { background: #f4a020; }
+  .hcal-row:hover td { background: rgba(0,0,0,.02); }
+  .hcal-now { background: rgba(107,143,71,.15); border-radius: 4px; font-weight: 700; color: var(--moss); }
+
+  /* ── ROTATION ── */
+  .rotation-container { display: flex; flex-direction: column; gap: 12px; }
+  .zone-card {
+    background: white;
+    border-radius: var(--rad);
+    box-shadow: 0 1px 6px var(--shade);
+    overflow: hidden;
+  }
+  .zone-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: .9rem;
+  }
+  .zone-sun { background: linear-gradient(120deg, #fff8d4, #ffe8a0); color: #7a5000; }
+  .zone-half { background: linear-gradient(120deg, #e8f4d4, #d0e8b8); color: #2a5a0a; }
+  .zone-shade { background: linear-gradient(120deg, #d8ecf0, #b8d8e4); color: #1a4a5a; }
+  .zone-body { padding: 14px 16px; }
+  .zone-year-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+  .year-block {
+    flex: 1;
+    min-width: 120px;
+    background: var(--paper);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .year-label { font-size: .7rem; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .year-crops { display: flex; flex-direction: column; gap: 3px; }
+  .crop-item { font-size: .82rem; display: flex; align-items: center; gap: 5px; }
+  .crop-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .family-solanees { background: #f4a0a0; }
+  .family-cruciferes { background: #a0d4f4; }
+  .family-cucurbitacees { background: #a0f4b8; }
+  .family-apiaceae { background: #f4e0a0; }
+  .family-alliaceae { background: #d4a0f4; }
+  .family-fabaceae { background: #f4c4a0; }
+  .rotation-tip {
+    background: var(--paper);
+    border-left: 3px solid var(--leaf);
+    padding: 12px 14px;
+    border-radius: 0 8px 8px 0;
+    font-size: .85rem;
+    line-height: 1.5;
+    color: #555;
+    margin-top: 16px;
+  }
+
+  /* ── NUISIBLES ── */
+  .pest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .pest-card {
+    background: white;
+    border-radius: var(--rad);
+    box-shadow: 0 1px 6px var(--shade);
+    overflow: hidden;
+  }
+  .pest-header { padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+  .pest-icon { font-size: 1.8rem; }
+  .pest-name { font-weight: 700; font-size: .9rem; }
+  .pest-type { font-size: .72rem; color: var(--muted); }
+  .pest-body { padding: 0 14px 14px; font-size: .82rem; line-height: 1.5; color: #555; }
+  .pest-treatment {
+    margin-top: 8px;
+    background: var(--paper);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: .8rem;
+  }
+  .pest-treatment strong { color: var(--moss); }
+
+  /* ── TODAY WIDGET ── */
+  .today-strip {
+    background: linear-gradient(135deg, var(--soil) 0%, var(--moss) 100%);
+    border-radius: var(--rad);
+    padding: 20px;
+    color: white;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .today-strip::before {
+    content: '🌿';
+    position: absolute;
+    right: -10px; top: -10px;
+    font-size: 5rem;
+    opacity: .12;
+  }
+  .today-strip h2 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 4px; }
+  .today-strip p { font-size: .85rem; opacity: .8; }
+  .today-tasks { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .today-task { display: flex; align-items: center; gap: 8px; font-size: .85rem; }
+  .task-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sun); flex-shrink: 0; }
+
+  /* ── SERRE WIDGET ── */
+  .serre-diagram {
+    background: white;
+    border-radius: var(--rad);
+    padding: 18px;
+    box-shadow: 0 1px 6px var(--shade);
+    margin-bottom: 16px;
+  }
+  .serre-viz {
+    display: flex;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 14px 0;
+    height: 90px;
+  }
+  .serre-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px;
+    font-size: .75rem;
+    text-align: center;
+    font-weight: 500;
+  }
+  .serre-nord { background: linear-gradient(180deg, #fff8d4 0%, #ffe080 100%); color: #6a4800; }
+  .serre-mid { background: linear-gradient(180deg, #f0f5e8 0%, #d8edbc 100%); color: #2a5a0a; }
+  .serre-sud { background: linear-gradient(180deg, #e0eef5 0%, #b8d8e8 100%); color: #1a3a4a; }
+  .serre-divider { width: 2px; background: #ddd; }
+  .serre-label { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: .9rem; }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
 </style>
 </head>
-
 <body>
 
-<header>🌱 Potager IA Ultime</header>
+<nav>
+  <div class="nav-title">🌱 Mon Jardin</div>
+  <button class="nav-btn active" onclick="showTab('tableau')">Tableau de bord</button>
+  <button class="nav-btn" onclick="showTab('fiches')">Fiches légumes</button>
+  <button class="nav-btn" onclick="showTab('suivi')">Mon suivi</button>
+  <button class="nav-btn" onclick="showTab('recoltes')">Récoltes</button>
+  <button class="nav-btn" onclick="showTab('rotation')">Rotation</button>
+  <button class="nav-btn" onclick="showTab('nuisibles')">Nuisibles</button>
+</nav>
 
-<div class="container">
+<!-- ══════════════════ TABLEAU DE BORD ══════════════════ -->
+<section id="tab-tableau" class="active">
+  <div class="today-strip">
+    <h2 id="today-greeting">Bienvenue au jardin 👋</h2>
+    <p id="today-date"></p>
+    <div class="today-tasks" id="today-tasks"></div>
+  </div>
 
-<div class="card">
-<h3>🌦 Météo + Gel IA</h3>
-<p id="meteo">Chargement...</p>
-<div id="alert"></div>
-</div>
+  <div class="serre-diagram">
+    <div class="card-title"><span>🏠</span> Ma serre — orientation & lumière</div>
+    <div class="serre-viz">
+      <div class="serre-zone serre-nord">
+        <span>☀️</span>
+        <strong>Entrée Nord</strong>
+        <span class="serre-label">Plein soleil</span>
+        <small>Tomates, poivrons</small>
+      </div>
+      <div class="serre-divider"></div>
+      <div class="serre-zone serre-mid">
+        <span>🌤️</span>
+        <strong>Centre</strong>
+        <span class="serre-label">Mi-ombre</span>
+        <small>Concombres, basilic</small>
+      </div>
+      <div class="serre-divider"></div>
+      <div class="serre-zone serre-sud">
+        <span>🌥️</span>
+        <strong>Sortie Sud</strong>
+        <span class="serre-label">À l'ombre</span>
+        <small>Salades, épinards</small>
+      </div>
+    </div>
+    <p style="font-size:.8rem;color:var(--muted);">Modifie les emplacements dans l'onglet Rotation selon tes cultures actuelles.</p>
+  </div>
 
-<div class="card">
-<h3>🏡 Mode culture</h3>
-<button onclick="toggleMode()" id="modeBtn">Mode : Extérieur 🌿</button>
-<p id="modeTxt"></p>
-</div>
+  <div class="card">
+    <div class="card-title"><span>📅</span> À faire ce mois-ci</div>
+    <div id="monthly-tasks"></div>
+    <div class="months-legend" style="margin-top:14px;">
+      <div class="legend-item"><div class="legend-dot" style="background:#d4eab8"></div>Semis</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffe0b2"></div>Plantation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffd6a0"></div>Récolte</div>
+    </div>
+  </div>
 
-<div class="card">
-<h3>📅 Calendrier</h3>
-<div class="calendar" id="cal"></div>
-</div>
+  <div class="card">
+    <div class="card-title"><span>🌡️</span> Calendrier de l'année</div>
+    <div style="overflow-x:auto">
+      <table class="hcal-table" id="main-calendar"></table>
+    </div>
+  </div>
+</section>
 
+<!-- ══════════════════ FICHES LÉGUMES ══════════════════ -->
+<section id="tab-fiches">
+  <h1 class="section-title">Fiches légumes</h1>
+  <p class="section-sub">Appuie sur un légume pour voir sa fiche complète.</p>
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;" id="filter-bar">
+    <button class="tag" style="cursor:pointer;padding:6px 12px;" onclick="filterVeg('all')" id="f-all">Tous</button>
+    <button class="tag sun" style="cursor:pointer;padding:6px 12px;" onclick="filterVeg('sun')">☀️ Soleil</button>
+    <button class="tag half" style="cursor:pointer;padding:6px 12px;" onclick="filterVeg('half')">🌤️ Mi-ombre</button>
+    <button class="tag shade" style="cursor:pointer;padding:6px 12px;" onclick="filterVeg('shade')">🌥️ Ombre</button>
+    <button class="tag easy" style="cursor:pointer;padding:6px 12px;" onclick="filterVeg('easy')">Facile</button>
+  </div>
+  <div class="veg-grid" id="veg-grid"></div>
+</section>
+
+<!-- ══════════════════ SUIVI ══════════════════ -->
+<section id="tab-suivi">
+  <h1 class="section-title">Mon suivi</h1>
+  <p class="section-sub">Enregistre tes semis et plantations pour suivre l'évolution.</p>
+
+  <div class="add-sow-form">
+    <div class="card-title"><span>➕</span> Nouveau semis / plantation</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Légume</label>
+        <select id="sow-veg">
+          <option value="">Choisir...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Action</label>
+        <select id="sow-action">
+          <option value="semis">Semis</option>
+          <option value="plantation">Plantation</option>
+          <option value="repiquage">Repiquage</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="sow-date">
+      </div>
+      <div class="form-group">
+        <label>Emplacement</label>
+        <select id="sow-location">
+          <option value="serre-nord">Serre — entrée Nord (soleil)</option>
+          <option value="serre-milieu">Serre — centre (mi-ombre)</option>
+          <option value="serre-sud">Serre — sortie Sud (ombre)</option>
+          <option value="plein-air">Plein air</option>
+          <option value="potager">Potager</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Note</label>
+        <input type="text" id="sow-note" placeholder="Variété, quantité…">
+      </div>
+    </div>
+    <button class="btn-add" onclick="addSowing()">Enregistrer</button>
+  </div>
+
+  <div class="sow-list" id="sow-list">
+    <div class="empty-state">
+      <span class="empty-icon">🌱</span>
+      Aucun semis enregistré.<br>Commence par ajouter ton premier semis !
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ RÉCOLTES ══════════════════ -->
+<section id="tab-recoltes">
+  <h1 class="section-title">Calendrier des récoltes</h1>
+  <p class="section-sub">Visualise quand chaque légume sera prêt à récolter.</p>
+  <div class="harvest-calendar">
+    <table class="hcal-table" id="harvest-table"></table>
+  </div>
+  <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;">
+    <div class="legend-item"><div class="legend-dot" style="background:#d4eab8;width:12px;height:12px;border-radius:2px"></div>Semis</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ffe0b2;width:12px;height:12px;border-radius:2px"></div>Plantation</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ffd6a0;width:12px;height:12px;border-radius:2px"></div>Récolte possible</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f4a020;width:12px;height:12px;border-radius:2px"></div>Récolte optimale</div>
+  </div>
+</section>
+
+<!-- ══════════════════ ROTATION ══════════════════ -->
+<section id="tab-rotation">
+  <h1 class="section-title">Rotation des cultures</h1>
+  <p class="section-sub">Évite les maladies et fatigue du sol en changeant les familles chaque année.</p>
+
+  <div class="rotation-container" id="rotation-zones"></div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title"><span>🔄</span> Règles de rotation</div>
+    <div style="font-size:.85rem;line-height:1.7;color:#555;">
+      <p><strong>Principe :</strong> Ne jamais replanter la même famille au même endroit deux années de suite. Idéalement, attendre <strong>3 à 4 ans</strong>.</p>
+      <br>
+      <p>🍅 <strong>Solanées</strong> (tomate, poivron, aubergine) → suivies par les légumineuses</p>
+      <p>🥦 <strong>Crucifères</strong> (chou, brocoli, radis) → suivies par les solanées</p>
+      <p>🥒 <strong>Cucurbitacées</strong> (concombre, courgette) → suivies par les crucifères</p>
+      <p>🥕 <strong>Apiacées</strong> (carotte, panais, céleri) → suivies par les cucurbitacées</p>
+      <p>🧅 <strong>Alliacées</strong> (oignon, ail, poireau) → neutres, bonnes compagnes universelles</p>
+      <p>🫘 <strong>Fabacées</strong> (haricot, pois) → enrichissent le sol en azote, idéales avant les crucifères</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🤝</span> Associations bénéfiques</div>
+    <div style="font-size:.85rem;line-height:1.7;color:#555;">
+      <p>✅ Tomates + Basilic (repousse les pucerons)</p>
+      <p>✅ Carottes + Oignons (perturbent les ravageurs mutuellement)</p>
+      <p>✅ Haricots + Maïs + Courge (les 3 sœurs)</p>
+      <p>✅ Laitue + Radis (les radis repoussent les altises)</p>
+      <p>❌ Fenouil : éviter près de tout (allélopathique)</p>
+      <p>❌ Oignons + Pois (se gênent mutuellement)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ NUISIBLES ══════════════════ -->
+<section id="tab-nuisibles">
+  <h1 class="section-title">Mauvaises herbes & nuisibles</h1>
+  <p class="section-sub">Identification et traitements naturels.</p>
+  <div class="pest-grid" id="pest-grid"></div>
+</section>
+
+<!-- ══════════════════ MODAL LÉGUME ══════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="veg-modal">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="modal-content"></div>
+  </div>
 </div>
 
 <script>
+// ════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════
 
-let mode="ext";
-let lat=47.9, lon=1.9;
+const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 
-function toggleMode(){
-mode = mode==="ext"?"serre":"ext";
-document.getElementById("modeBtn").innerText =
-mode==="ext"?"Mode : Extérieur 🌿":"Mode : Serre 🏠";
-document.getElementById("modeTxt").innerText =
-mode==="ext"?"Culture normale":"Culture protégée serre";
+const VEGETABLES = [
+  {
+    id:'tomate', name:'Tomate', latin:'Solanum lycopersicum', emoji:'🍅',
+    family:'solanees', light:'sun', water:'high', hardiness:'fragile',
+    difficulty:'medium', tempMin:10, tempMax:30,
+    sow:[2,3,4], plant:[4,5,6], harvest:[6,7,8,9,10],
+    description:'La tomate est reine du potager mais exigeante. Elle a besoin de chaleur, de soleil et d\'un arrosage régulier sans excès. Tuteurée dès 30 cm.',
+    tips:'Supprimer les gourmands pour concentrer l\'énergie. Arroser au pied, jamais sur les feuilles.',
+    companions:['Basilic','Carotte','Persil','Céleri'],
+    enemies:['Fenouil','Chou','Betterave'],
+    placement:'serre-nord',
+    daysToHarvest: 90,
+    waterDesc:'Élevé — 2-3 L/m²/jour en été',
+    sunDesc:'Plein soleil — 6h+ direct',
+  },
+  {
+    id:'poivron', name:'Poivron', latin:'Capsicum annuum', emoji:'🫑',
+    family:'solanees', light:'sun', water:'medium', hardiness:'fragile',
+    difficulty:'medium', tempMin:15, tempMax:32,
+    sow:[2,3], plant:[5,6], harvest:[7,8,9,10],
+    description:'Encore plus exigeant en chaleur que la tomate. Superbe en serre. Donne mieux avec des nuits chaudes.',
+    tips:'Ne pas planter avant que la serre soit bien chaude. Planter en pot pour mobilité.',
+    companions:['Basilic','Tomate','Carotte'],
+    enemies:['Fenouil'],
+    placement:'serre-nord',
+    daysToHarvest: 100,
+    waterDesc:'Moyen — arrosage régulier',
+    sunDesc:'Plein soleil indispensable',
+  },
+  {
+    id:'concombre', name:'Concombre', latin:'Cucumis sativus', emoji:'🥒',
+    family:'cucurbitacees', light:'half', water:'high', hardiness:'fragile',
+    difficulty:'easy', tempMin:18, tempMax:32,
+    sow:[3,4,5], plant:[5,6], harvest:[6,7,8,9],
+    description:'Le concombre aime la chaleur mais tolère une légère mi-ombre. En serre il pousse à merveille sur filet vertical pour gagner de la place.',
+    tips:'Arroser abondamment et régulièrement. Former sur filet, supprimer les gourmands après 2 feuilles.',
+    companions:['Haricot','Céleri','Laitue'],
+    enemies:['Tomate','Pomme de terre'],
+    placement:'serre-milieu',
+    daysToHarvest: 55,
+    waterDesc:'Élevé — sol constamment humide',
+    sunDesc:'Mi-ombre acceptée',
+  },
+  {
+    id:'laitue', name:'Laitue', latin:'Lactuca sativa', emoji:'🥗',
+    family:'asteraceae', light:'shade', water:'medium', hardiness:'hardy',
+    difficulty:'easy', tempMin:5, tempMax:22,
+    sow:[2,3,4,5,6,7,8,9], plant:[3,4,5,6,7,8,9], harvest:[4,5,6,7,8,9,10,11],
+    description:'Culture facile et rapide, parfaite pour les espaces ombragés. Semer en plusieurs fois pour avoir une production continue.',
+    tips:'Semer toutes les 3 semaines. Monter en graine par la chaleur — choisir des variétés résistantes en été.',
+    companions:['Radis','Carotte','Fraise','Ciboulette'],
+    enemies:['Céleri','Persil'],
+    placement:'serre-sud',
+    daysToHarvest: 50,
+    waterDesc:'Moyen — garder le sol frais',
+    sunDesc:'Ombre partielle idéale',
+  },
+  {
+    id:'carotte', name:'Carotte', latin:'Daucus carota', emoji:'🥕',
+    family:'apiaceae', light:'half', water:'medium', hardiness:'hardy',
+    difficulty:'easy', tempMin:7, tempMax:25,
+    sow:[3,4,5,6,7], plant:[], harvest:[6,7,8,9,10,11],
+    description:'La carotte se sème directement en place, dans un sol profond, meuble et sans cailloux. Patience : la germination est lente.',
+    tips:'Éclaircir à 5-8 cm dès que les plantules ont 3 cm. Associer aux oignons.',
+    companions:['Oignon','Poireau','Salade','Radis'],
+    enemies:['Fenouil','Aneth'],
+    placement:'plein-air',
+    daysToHarvest: 80,
+    waterDesc:'Moyen — éviter l\'excès',
+    sunDesc:'Mi-ombre ou soleil modéré',
+  },
+  {
+    id:'haricot', name:'Haricot vert', latin:'Phaseolus vulgaris', emoji:'🫘',
+    family:'fabaceae', light:'sun', water:'medium', hardiness:'fragile',
+    difficulty:'easy', tempMin:15, tempMax:28,
+    sow:[4,5,6,7], plant:[], harvest:[6,7,8,9,10],
+    description:'Culture rapide et productive. Le haricot fixe l\'azote atmosophérique et enrichit le sol pour les cultures suivantes.',
+    tips:'Semer directement en place par petites poignées. Éviter l\'excès d\'eau. Récolter jeune pour stimuler la production.',
+    companions:['Courgette','Maïs','Concombre','Betterave'],
+    enemies:['Oignon','Ail','Poireau'],
+    placement:'plein-air',
+    daysToHarvest: 60,
+    waterDesc:'Moyen — sensible à la sécheresse à la floraison',
+    sunDesc:'Plein soleil préférable',
+  },
+  {
+    id:'courgette', name:'Courgette', latin:'Cucurbita pepo', emoji:'🥬',
+    family:'cucurbitacees', light:'sun', water:'high', hardiness:'fragile',
+    difficulty:'easy', tempMin:15, tempMax:30,
+    sow:[4,5], plant:[5,6], harvest:[6,7,8,9,10],
+    description:'Produit en abondance ! Un ou deux pieds suffisent. Plante volumineuse, prévoir 1 m² minimum par plant.',
+    tips:'Arroser au pied, feuilles hydrophobes mais sensibles à l\'oïdium. Récolter à 15-20 cm.',
+    companions:['Haricot','Maïs','Basilic','Aneth'],
+    enemies:['Pomme de terre'],
+    placement:'plein-air',
+    daysToHarvest: 55,
+    waterDesc:'Élevé — plante très gourmande',
+    sunDesc:'Plein soleil nécessaire',
+  },
+  {
+    id:'epinard', name:'Épinard', latin:'Spinacia oleracea', emoji:'🌿',
+    family:'chenopodiaceae', light:'shade', water:'medium', hardiness:'very-hardy',
+    difficulty:'easy', tempMin:0, tempMax:18,
+    sow:[2,3,4,8,9,10], plant:[], harvest:[3,4,5,9,10,11,12],
+    description:'Culture de saison fraîche, parfaite pour les zones ombragées de la serre en hiver et printemps. Monte vite en graine par la chaleur.',
+    tips:'Choisir des variétés lentes à monter en été. Récolter les grandes feuilles extérieures progressivement.',
+    companions:['Fraise','Radis','Chou'],
+    enemies:['Betterave'],
+    placement:'serre-sud',
+    daysToHarvest: 45,
+    waterDesc:'Moyen — sol frais',
+    sunDesc:'Ombre partielle idéale',
+  },
+  {
+    id:'radis', name:'Radis', latin:'Raphanus sativus', emoji:'🔴',
+    family:'cruciferes', light:'half', water:'medium', hardiness:'very-hardy',
+    difficulty:'easy', tempMin:5, tempMax:22,
+    sow:[2,3,4,5,6,7,8,9,10], plant:[], harvest:[3,4,5,6,7,8,9,10,11],
+    description:'Le légume le plus rapide du jardin : 3 à 4 semaines du semis à la récolte ! Idéal pour intercaler entre des cultures plus lentes.',
+    tips:'Semer en échelonné toutes les 2 semaines. Arroser régulièrement pour éviter le piquant.',
+    companions:['Laitue','Carotte','Haricot','Pois'],
+    enemies:['Chou','Hysope'],
+    placement:'plein-air',
+    daysToHarvest: 25,
+    waterDesc:'Moyen — régulier',
+    sunDesc:'Mi-ombre acceptée',
+  },
+  {
+    id:'basilic', name:'Basilic', latin:'Ocimum basilicum', emoji:'🌱',
+    family:'lamiaceae', light:'sun', water:'medium', hardiness:'fragile',
+    difficulty:'medium', tempMin:18, tempMax:35,
+    sow:[3,4,5], plant:[5,6], harvest:[6,7,8,9,10],
+    description:'Aromatique indispensable, excellent compagnon de la tomate. Très sensible au froid.',
+    tips:'Ne jamais exposer au froid. Pincer les fleurs pour prolonger la récolte de feuilles.',
+    companions:['Tomate','Poivron','Aubergine'],
+    enemies:['Sauge','Fenouil'],
+    placement:'serre-milieu',
+    daysToHarvest: 40,
+    waterDesc:'Moyen — régulier mais drainé',
+    sunDesc:'Plein soleil indispensable',
+  },
+];
+
+const PESTS = [
+  {
+    icon:'🐌', name:'Limaces & Escargots', type:'Ravageur animal',
+    desc:'Dégâts la nuit, traces de mucus. Mangent les jeunes plants et feuilles tendres.',
+    treatment:'Cendrée en cercle autour des plants. Pièges à bière. Granulés de métaldéhyde naturel (ferphosphate de fer). Canards ou hérissons dans le jardin.',
+  },
+  {
+    icon:'🦟', name:'Pucerons', type:'Ravageur insecte',
+    desc:'Colonies vertes, noires ou grises sur tiges et sous les feuilles. Affaiblissent les plants et transmettent virus.',
+    treatment:'Savon noir dilué en pulvérisation. Purin d\'ortie. Favoriser coccinelles et chrysopes. Eau froide pour déloger.',
+  },
+  {
+    icon:'🌱', name:'Chiendent', type:'Mauvaise herbe vivace',
+    desc:'Racines souterraines rhizomateuses très envahissantes. Difficile à éradiquer une fois installé.',
+    treatment:'Arracher avec toute la racine (bêche plate). Couvrir le sol (paillage épais 10 cm). Ne jamais déchiqueter au motoculteur (fragmente les rhizomes).',
+  },
+  {
+    icon:'🌿', name:'Ortie dioïque', type:'Mauvaise herbe',
+    desc:'Pousse rapide, envahissante. Mais excellente plante compagne — purins utiles.',
+    treatment:'Couper avant la floraison. Utiliser les feuilles pour faire du purin d\'ortie fertilisant. Laisser une petite zone : habitat pour insectes utiles.',
+  },
+  {
+    icon:'🍄', name:'Oïdium', type:'Maladie fongique',
+    desc:'Poudre blanche sur les feuilles, surtout cucurbitacées. Se développe avec chaleur sèche et humidité nocturne.',
+    treatment:'Bicarbonate de soude (1 c.s./1L + 1 c.c. savon). Décoction de prêle. Améliorer la ventilation. Supprimer feuilles atteintes.',
+  },
+  {
+    icon:'🐛', name:'Chenilles (piéride)', type:'Ravageur insecte',
+    desc:'Œufs jaunes sous les feuilles de choux. Les larves dévorent le feuillage rapidement.',
+    treatment:'Filet anti-insectes. Ramasser les œufs et larves à la main. BT (Bacillus thuringiensis) bio. Planter de la capucine comme piège.',
+  },
+  {
+    icon:'🌾', name:'Liseron', type:'Mauvaise herbe vivace',
+    desc:'Plante grimpante à racines profondes. S\'enroule autour des tiges et étouffe les cultures.',
+    treatment:'Arracher régulièrement avant floraison. Racines très profondes — courage. Paillage épais. Patience : 2-3 saisons de lutte.',
+  },
+  {
+    icon:'🪲', name:'Altises', type:'Ravageur insecte',
+    desc:'Petits coléoptères noirs. Criblures rondes sur les feuilles de radis, roquette, crucifères.',
+    treatment:'Pulvérisation d\'eau le matin (elles n\'aiment pas l\'humidité). Filet fin. Cendres ou terre de diatomée au pied.',
+  },
+];
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let sowings = JSON.parse(localStorage.getItem('garden_sowings') || '[]');
+
+// ════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
 }
 
-async function weather(){
-const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=temperature_2m_min&timezone=auto`;
-const r=await fetch(url);
-const d=await r.json();
-
-let t=d.current_weather.temperature;
-let n=d.daily.temperature_2m_min[0];
-
-let msg="", type="good";
-
-if(n<=0){msg="❄️ GEL CRITIQUE"; type="danger";}
-else if(n<=3){msg="⚠️ risque gel"; type="warn";}
-else{msg="🌱 OK jardin"; type="good";}
-
-document.getElementById("meteo").innerText=
-`Temp: ${t}°C | Nuit: ${n}°C`;
-
-document.getElementById("alert").innerHTML=
-`<div class='alert ${type}'>${msg}</div>`;
-}
-
-weather();
-
-const cal=document.getElementById("cal");
-const months=["Jan","Fev","Mar","Avr","Mai","Jun","Jul","Aou","Sep","Oct","Nov","Dec"];
-
-months.forEach((m,i)=>{
-let d=document.createElement("div");
-d.className="month";
-d.innerText=m;
-d.onclick=()=>alert("Mois "+m);
-cal.appendChild(d);
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  initToday();
+  renderVegGrid();
+  renderCalendar();
+  renderHarvestTable();
+  renderRotation();
+  renderPests();
+  renderSowings();
+  populateSowSelect();
+  // set today in date input
+  document.getElementById('sow-date').value = new Date().toISOString().split('T')[0];
 });
 
-</script>
+// ════════════════════════════════════════════════
+// TODAY WIDGET
+// ════════════════════════════════════════════════
+function initToday() {
+  const now = new Date();
+  const m = now.getMonth(); // 0-based
+  const hours = now.getHours();
+  const greet = hours < 12 ? 'Bonjour' : hours < 18 ? 'Bon après-midi' : 'Bonsoir';
+  document.getElementById('today-greeting').textContent = `${greet} au jardin 🌱`;
+  document.getElementById('today-date').textContent = now.toLocaleDateString('fr-FR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
+  const tasks = [];
+  VEGETABLES.forEach(v => {
+    if(v.sow.includes(m+1)) tasks.push(`Semer : ${v.emoji} ${v.name}`);
+    if(v.plant.includes(m+1)) tasks.push(`Planter : ${v.emoji} ${v.name}`);
+    if(v.harvest.includes(m+1)) tasks.push(`Récolter : ${v.emoji} ${v.name}`);
+  });
+  const container = document.getElementById('today-tasks');
+  if(tasks.length === 0) {
+    container.innerHTML = '<div style="opacity:.7;font-size:.85rem;">Mois calme — profites-en pour préparer le sol !</div>';
+  } else {
+    tasks.slice(0,5).forEach(t => {
+      container.innerHTML += `<div class="today-task"><div class="task-dot"></div>${t}</div>`;
+    });
+  }
+}
+
+// ════════════════════════════════════════════════
+// MAIN CALENDAR
+// ════════════════════════════════════════════════
+function renderCalendar() {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const table = document.getElementById('main-calendar');
+  let html = '<tr><th style="text-align:left;padding:6px 8px 6px 0;min-width:90px">Légume</th>';
+  MONTHS.forEach((m,i) => {
+    const isNow = i+1 === currentMonth;
+    html += `<th class="${isNow ? 'hcal-now' : ''}">${m}</th>`;
+  });
+  html += '</tr>';
+  VEGETABLES.forEach(v => {
+    html += `<tr class="hcal-row"><td class="veg-col" style="padding:4px 8px 4px 0;font-size:.82rem;">${v.emoji} ${v.name}</td>`;
+    for(let m=1;m<=12;m++){
+      let cls = '';
+      if(v.harvest.includes(m)) cls = v.harvest.indexOf(m) >= 1 && v.harvest.indexOf(m) <= v.harvest.length-2 ? 'hcal-cell best-harvest' : 'hcal-cell harvest-m';
+      if(v.plant.includes(m)) cls = 'hcal-cell plant-m';
+      if(v.sow.includes(m)) cls = 'hcal-cell sow-m';
+      const isNow = m === currentMonth;
+      html += `<td><div class="${cls} ${isNow ? 'hcal-now' : ''}" style="width:32px;height:20px;border-radius:4px;"></div></td>`;
+    }
+    html += '</tr>';
+  });
+  table.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════
+// MONTHLY TASKS
+// ════════════════════════════════════════════════
+function renderMonthlyTasks() {
+  // rendered inside today widget
+}
+
+// ════════════════════════════════════════════════
+// VEG GRID
+// ════════════════════════════════════════════════
+function renderVegGrid(filter='all') {
+  const grid = document.getElementById('veg-grid');
+  let html = '';
+  VEGETABLES.filter(v => {
+    if(filter === 'all') return true;
+    if(filter === 'easy') return v.difficulty === 'easy';
+    return v.light === filter;
+  }).forEach(v => {
+    const lightTag = v.light === 'sun' ? '<span class="tag sun">☀️ Soleil</span>' :
+                     v.light === 'half' ? '<span class="tag half">🌤️ Mi-ombre</span>' :
+                     '<span class="tag shade">🌥️ Ombre</span>';
+    const diffTag = v.difficulty === 'easy' ? '<span class="tag easy">Facile</span>' :
+                    v.difficulty === 'medium' ? '<span class="tag medium">Moyen</span>' :
+                    '<span class="tag hard">Difficile</span>';
+    html += `<div class="veg-card" onclick="openModal('${v.id}')">
+      <span class="veg-emoji">${v.emoji}</span>
+      <div class="veg-name">${v.name}</div>
+      <div class="veg-tags">${lightTag}${diffTag}</div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function filterVeg(f) {
+  renderVegGrid(f);
+}
+
+// ════════════════════════════════════════════════
+// MODAL
+// ════════════════════════════════════════════════
+function openModal(id) {
+  const v = VEGETABLES.find(x => x.id === id);
+  if(!v) return;
+  const lightLabel = v.light === 'sun' ? '☀️ Plein soleil' : v.light === 'half' ? '🌤️ Mi-ombre' : '🌥️ Ombre';
+  const hardLabel = v.hardiness === 'very-hardy' ? '❄️ Très rustique' : v.hardiness === 'hardy' ? '🌡️ Rustique' : '🔥 Fragile';
+  const diffLabel = v.difficulty === 'easy' ? '✅ Facile' : v.difficulty === 'medium' ? '⚠️ Moyen' : '🔴 Difficile';
+  
+  let sowMonths = '<div class="months-grid">';
+  for(let m=1;m<=12;m++){
+    let cls = '';
+    if(v.sow.includes(m)) cls = 'sow';
+    else if(v.plant.includes(m)) cls = 'plant';
+    else if(v.harvest.includes(m)) cls = 'harvest';
+    sowMonths += `<div class="m-badge ${cls}">${MONTHS[m-1].slice(0,1)}</div>`;
+  }
+  sowMonths += '</div>';
+  
+  const companions = v.companions.map(c => `<span class="companion-tag">✅ ${c}</span>`).join('');
+  const enemies = v.enemies.map(e => `<span class="enemy-tag">❌ ${e}</span>`).join('');
+  const placementMap = {'serre-nord':'Entrée serre (soleil)','serre-milieu':'Centre serre (mi-ombre)','serre-sud':'Sortie serre (ombre)','plein-air':'Plein air','potager':'Potager'};
+
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header">
+      <span class="modal-icon">${v.emoji}</span>
+      <div>
+        <div class="modal-name">${v.name}</div>
+        <div class="modal-latin">${v.latin}</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="ic-label">Lumière</div><div class="ic-val">${lightLabel}</div></div>
+      <div class="info-cell"><div class="ic-label">Rusticité</div><div class="ic-val">${hardLabel}</div></div>
+      <div class="info-cell"><div class="ic-label">Eau</div><div class="ic-val">${v.waterDesc}</div></div>
+      <div class="info-cell"><div class="ic-label">Soleil</div><div class="ic-val">${v.sunDesc}</div></div>
+      <div class="info-cell"><div class="ic-label">Température min.</div><div class="ic-val">${v.tempMin}°C</div></div>
+      <div class="info-cell"><div class="ic-label">Difficulté</div><div class="ic-val">${diffLabel}</div></div>
+      <div class="info-cell"><div class="ic-label">Jours avant récolte</div><div class="ic-val">~${v.daysToHarvest}j</div></div>
+      <div class="info-cell"><div class="ic-label">Emplacement idéal</div><div class="ic-val">${placementMap[v.placement]||v.placement}</div></div>
+    </div>
+    <p class="modal-desc">${v.description}</p>
+    <p class="modal-desc" style="background:var(--paper);padding:10px 12px;border-radius:8px;"><strong>💡 Conseil :</strong> ${v.tips}</p>
+    <div class="modal-section-title">Calendrier</div>
+    ${sowMonths}
+    <div class="months-legend" style="margin-bottom:16px">
+      <div class="legend-item"><div class="legend-dot" style="background:#d4eab8"></div>Semis</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffe0b2"></div>Plantation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffd6a0"></div>Récolte</div>
+    </div>
+    <div class="modal-section-title">Bonnes associations</div>
+    <div class="companion-list">${companions}</div>
+    <div class="modal-section-title">Mauvaises associations</div>
+    <div class="companion-list">${enemies}</div>
+    <div style="margin-top:18px">
+      <button class="btn-add" style="width:100%" onclick="quickAddSowing('${v.id}')">➕ Ajouter un semis/plantation</button>
+    </div>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if(e.target === document.getElementById('modal-overlay'))
+    document.getElementById('modal-overlay').classList.remove('open');
+}
+function closeModalBtn() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function quickAddSowing(id) {
+  closeModalBtn();
+  showTab({target: document.querySelectorAll('.nav-btn')[2]}, 'suivi');
+  // hack : switch tab
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-suivi').classList.add('active');
+  document.querySelectorAll('.nav-btn')[2].classList.add('active');
+  document.getElementById('sow-veg').value = id;
+}
+
+// ════════════════════════════════════════════════
+// HARVEST TABLE
+// ════════════════════════════════════════════════
+function renderHarvestTable() {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const table = document.getElementById('harvest-table');
+  let html = '<tr><th style="text-align:left;padding:6px 8px 6px 0;min-width:90px">Légume</th>';
+  MONTHS.forEach((m,i) => {
+    html += `<th class="${i+1===currentMonth ? 'hcal-now':''}"">${m}</th>`;
+  });
+  html += '</tr>';
+  VEGETABLES.forEach(v => {
+    html += `<tr class="hcal-row"><td class="veg-col">${v.emoji} ${v.name}</td>`;
+    for(let m=1;m<=12;m++){
+      let cls = '';
+      const hi = v.harvest.indexOf(m);
+      if(hi !== -1) {
+        cls = (hi > 0 && hi < v.harvest.length-1) ? 'hcal-cell best-harvest' : 'hcal-cell harvest-m';
+      }
+      if(v.plant.includes(m) && !cls) cls = 'hcal-cell plant-m';
+      if(v.sow.includes(m) && !cls) cls = 'hcal-cell sow-m';
+      html += `<td><div class="${cls}" style="width:32px;height:20px;border-radius:4px;${m===currentMonth?'outline:2px solid var(--moss);':''}" ></div></td>`;
+    }
+    html += '</tr>';
+  });
+  table.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════
+// SOWINGS
+// ════════════════════════════════════════════════
+function populateSowSelect() {
+  const sel = document.getElementById('sow-veg');
+  VEGETABLES.forEach(v => {
+    sel.innerHTML += `<option value="${v.id}">${v.emoji} ${v.name}</option>`;
+  });
+}
+
+function addSowing() {
+  const vegId = document.getElementById('sow-veg').value;
+  const action = document.getElementById('sow-action').value;
+  const date = document.getElementById('sow-date').value;
+  const location = document.getElementById('sow-location').value;
+  const note = document.getElementById('sow-note').value;
+  if(!vegId || !date) return alert('Choisis un légume et une date.');
+  const veg = VEGETABLES.find(v => v.id === vegId);
+  sowings.push({id: Date.now(), vegId, action, date, location, note, veg: {name:veg.name, emoji:veg.emoji, daysToHarvest:veg.daysToHarvest}});
+  saveSowings();
+  renderSowings();
+  document.getElementById('sow-note').value = '';
+}
+
+function saveSowings() {
+  localStorage.setItem('garden_sowings', JSON.stringify(sowings));
+}
+
+function deleteSowing(id) {
+  sowings = sowings.filter(s => s.id !== id);
+  saveSowings();
+  renderSowings();
+}
+
+function getStage(dateStr, daysToHarvest) {
+  const planted = new Date(dateStr);
+  const now = new Date();
+  const elapsed = Math.floor((now - planted) / 86400000);
+  const pct = elapsed / daysToHarvest;
+  if(pct < 0) return {label:'Planifié', cls:'stage-0'};
+  if(pct < 0.2) return {label:'Germination', cls:'stage-1'};
+  if(pct < 0.5) return {label:'Croissance', cls:'stage-2'};
+  if(pct < 0.9) return {label:'Mature', cls:'stage-3'};
+  return {label:'Prêt à récolter !', cls:'stage-4'};
+}
+
+function renderSowings() {
+  const container = document.getElementById('sow-list');
+  if(sowings.length === 0) {
+    container.innerHTML = '<div class="empty-state"><span class="empty-icon">🌱</span>Aucun semis enregistré.<br>Commence par ajouter ton premier semis !</div>';
+    return;
+  }
+  const sorted = [...sowings].sort((a,b) => new Date(b.date) - new Date(a.date));
+  container.innerHTML = sorted.map(s => {
+    const stage = getStage(s.date, s.veg.daysToHarvest);
+    const plantedDate = new Date(s.date);
+    const harvestDate = new Date(plantedDate.getTime() + s.veg.daysToHarvest * 86400000);
+    const daysLeft = Math.max(0, Math.floor((harvestDate - new Date()) / 86400000));
+    const locationLabels = {'serre-nord':'Serre Nord ☀️','serre-milieu':'Serre Centre 🌤️','serre-sud':'Serre Sud 🌥️','plein-air':'Plein air','potager':'Potager'};
+    return `<div class="sow-item">
+      <span class="sow-icon">${s.veg.emoji}</span>
+      <div class="sow-info">
+        <div class="sow-name">${s.veg.name}</div>
+        <div class="sow-details">${s.action} · ${new Date(s.date).toLocaleDateString('fr-FR')} · ${locationLabels[s.location]||s.location}${s.note ? ' · '+s.note : ''}</div>
+      </div>
+      <div class="sow-progress">
+        <span class="stage-badge ${stage.cls}">${stage.label}</span>
+        <span class="days-left">${daysLeft > 0 ? 'Récolte dans ~'+daysLeft+'j' : 'À récolter !'}</span>
+      </div>
+      <button class="sow-delete" onclick="deleteSowing(${s.id})">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════════════
+// ROTATION
+// ════════════════════════════════════════════════
+function renderRotation() {
+  const container = document.getElementById('rotation-zones');
+  const zones = [
+    {
+      name:'Entrée serre — Plein soleil ☀️', cls:'zone-sun',
+      years:[
+        {year:'2024', crops:['Tomates 🍅', 'Basilic 🌱'], families:['solanees','lamiaceae']},
+        {year:'2025', crops:['Haricots 🫘', 'Courgette 🥬'], families:['fabaceae','cucurbitacees']},
+        {year:'2026', crops:['Poivrons 🫑', 'Aubergines'], families:['solanees','solanees']},
+        {year:'2027 (prévu)', crops:['Radis 🔴', 'Choux'], families:['cruciferes','cruciferes']},
+      ]
+    },
+    {
+      name:'Centre serre — Mi-ombre 🌤️', cls:'zone-half',
+      years:[
+        {year:'2024', crops:['Concombres 🥒'], families:['cucurbitacees']},
+        {year:'2025', crops:['Carottes 🥕', 'Oignons'], families:['apiaceae','alliaceae']},
+        {year:'2026', crops:['Concombres 🥒', 'Basilic 🌱'], families:['cucurbitacees','lamiaceae']},
+        {year:'2027 (prévu)', crops:['Haricots 🫘'], families:['fabaceae']},
+      ]
+    },
+    {
+      name:'Sortie serre — Ombre 🌥️', cls:'zone-shade',
+      years:[
+        {year:'2024', crops:['Salades 🥗', 'Épinards 🌿'], families:['asteraceae','chenopodiaceae']},
+        {year:'2025', crops:['Radis 🔴', 'Mâche'], families:['cruciferes','asteraceae']},
+        {year:'2026', crops:['Salades 🥗', 'Épinards 🌿'], families:['asteraceae','chenopodiaceae']},
+        {year:'2027 (prévu)', crops:['Betteraves', 'Radis'], families:['chenopodiaceae','cruciferes']},
+      ]
+    },
+  ];
+
+  const familyColors = {
+    solanees:'#f4a0a0', cruciferes:'#a0d4f4', cucurbitacees:'#a0f4b8',
+    apiaceae:'#f4e0a0', alliaceae:'#d4a0f4', fabaceae:'#f4c4a0',
+    lamiaceae:'#c4e0f4', asteraceae:'#f4d0a0', chenopodiaceae:'#d0f4c0',
+  };
+
+  container.innerHTML = zones.map(z => `
+    <div class="zone-card">
+      <div class="zone-header ${z.cls}">${z.name}</div>
+      <div class="zone-body">
+        <div class="zone-year-grid">
+          ${z.years.map((y,i) => `
+            <div class="year-block" style="${i===2?'border:2px solid var(--leaf);':'' }">
+              <div class="year-label">${y.year}${i===2?' ← Maintenant':''}</div>
+              <div class="year-crops">
+                ${y.crops.map((c,j) => `
+                  <div class="crop-item">
+                    <div class="crop-dot" style="background:${familyColors[y.families[j]]||'#ddd'}"></div>
+                    ${c}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════════════════════════════════════════════════
+// PESTS
+// ════════════════════════════════════════════════
+function renderPests() {
+  const grid = document.getElementById('pest-grid');
+  grid.innerHTML = PESTS.map(p => `
+    <div class="pest-card">
+      <div class="pest-header">
+        <span class="pest-icon">${p.icon}</span>
+        <div>
+          <div class="pest-name">${p.name}</div>
+          <div class="pest-type">${p.type}</div>
+        </div>
+      </div>
+      <div class="pest-body">
+        <p>${p.desc}</p>
+        <div class="pest-treatment"><strong>🌿 Traitement naturel :</strong> ${p.treatment}</div>
+      </div>
+    </div>
+  `).join('');
+}
+</script>
 </body>
 </html>
