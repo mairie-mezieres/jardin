@@ -515,6 +515,8 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
 const MN=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
 
 // si=semis intérieur, so=semis extérieur, pl=plantation, ha=récolte, pk=récolte optimale, pr=protection
+// window.VEG : exposé sur window pour les modules ES (cultures-ui.js, expert.js, etc.)
+window.VEG=window.VEG||[];
 const VEG=[
 // SOLANÉES
 {id:'tomate',n:'Tomate',lat:'Solanum lycopersicum',e:'🍅',fam:'solanees',li:'sun',wa:'high',ha:'fragile',di:'medium',tmi:10,tma:32,dth:90,si:[2,3,4],so:[],pl:[5,6],ha:[7,8,9,10],pk:[7,8,9],pr:[],wd:'Élevé — 2-3 L/m²/jour été',sd:'Plein soleil 6h+',pl2:'sn',desc:'Reine du potager. Exige chaleur, soleil et arrosage régulier.',tips:'Supprimer gourmands. Tuteurer dès 30 cm. Jamais d\'eau sur feuilles.',co:['Basilic','Carotte','Persil','Piment'],en:['Fenouil','Chou','Pomme de terre']},
@@ -560,6 +562,7 @@ const VEG=[
 // DIVERS
 {id:'artichaut',n:'Artichaut',lat:'Cynara cardunculus',e:'🌸',fam:'asteraceae',li:'sun',wa:'medium',ha:'hardy',di:'medium',tmi:-8,tma:28,dth:180,si:[2,3],so:[],pl:[4,5],ha:[5,6,7,8],pk:[6,7],pr:[11,12,1],wd:'Moyen',sd:'Plein soleil',pl2:'pa',desc:'Vivace imposant. Récolter capitules avant ouverture. Effet décoratif.',tips:'Protéger pied avec feuilles sèches en hiver. Diviser rejets au printemps.',co:['Persil','Basilic'],en:[]},
 ];
+window.VEG=VEG;
 
 // NUISIBLES
 const PESTS=[
