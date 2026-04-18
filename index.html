@@ -335,15 +335,22 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
   </div>
   <div id="pm-dashboard-body" class="pm-dashboard__body">
     <div id="pm-alert-container" aria-live="assertive" aria-atomic="true" aria-hidden="true" style="display:none"></div>
-    <div id="pm-recos-offline" style="display:none" class="pm-recos-offline"
-         role="status" aria-live="polite">📡 Recommandations hors connexion</div>
-    <div id="pm-recos-container" aria-live="polite" aria-relevant="additions removals"></div>
-    <div id="pm-recos-empty" style="display:none" class="pm-recos-empty">
-      <p>Ajoute tes premières cultures dans le journal pour recevoir des recommandations personnalisées</p>
-      <button type="button" class="pm-recos-empty__cta touch-target"
-              onclick="showTab('journal', document.querySelector('[onclick*=journal]'))">
-        → Journal
-      </button>
+
+    <!-- Cultures actives -->
+    <div id="pm-today-cultures" aria-live="polite"></div>
+
+    <!-- Tâches dérivées des stades -->
+    <div id="pm-today-tasks" aria-live="polite"></div>
+
+    <!-- Recommandations expertes (météo + règles) -->
+    <div class="today-section" id="pm-today-recos-section">
+      <h2 class="today-section__title">💡 Conseils du moment</h2>
+      <div id="pm-recos-offline" style="display:none" class="pm-recos-offline"
+           role="status" aria-live="polite">📡 Hors connexion — météo non disponible</div>
+      <div id="pm-recos-container" aria-live="polite" aria-relevant="additions removals"></div>
+      <div id="pm-recos-empty" style="display:none" class="pm-recos-empty">
+        <p>Les conseils apparaîtront dès que tes cultures seront ajoutées</p>
+      </div>
     </div>
   </div>
 </section>

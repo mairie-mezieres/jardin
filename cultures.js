@@ -105,7 +105,7 @@ function update(id, changes) {
   if (idx === -1) return null;
   cultures[idx] = Object.assign({}, cultures[idx], changes);
   _saveCultures(cultures);
-  // document.dispatchEvent(new CustomEvent('pm:culture-updated', { detail: { id, changes } }));
+  document.dispatchEvent(new CustomEvent('pm:culture-updated', { detail: { id, changes } }));
   return cultures[idx];
 }
 
@@ -119,7 +119,7 @@ function deleteCulture(id) {
   const filtered = cultures.filter(c => c.id !== id);
   if (filtered.length === cultures.length) return false;
   _saveCultures(filtered);
-  // document.dispatchEvent(new CustomEvent('pm:culture-deleted', { detail: { id } }));
+  document.dispatchEvent(new CustomEvent('pm:culture-deleted', { detail: { id } }));
   return true;
 }
 
