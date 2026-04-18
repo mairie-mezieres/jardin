@@ -153,8 +153,8 @@ let _selectedMode = 'exterieur';
 
 function _buildEspeceSelect() {
   const sel = document.getElementById('pm-bs-espece');
-  if (!sel || sel.options.length > 1) return; // déjà rempli (options[0] = placeholder)
-  (window.VEG || []).forEach(v => {
+  if (!sel || sel.options.length > 1) return;
+  [...(window.VEG || [])].sort((a, b) => a.n.localeCompare(b.n, 'fr')).forEach(v => {
     const opt = document.createElement('option');
     opt.value       = v.id;
     opt.textContent = `${v.e} ${v.n}`;
