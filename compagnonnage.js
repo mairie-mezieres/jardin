@@ -10,7 +10,7 @@ let _data = null;
 
 async function _loadData() {
   try {
-    const res = await fetch('/compagnonnage-data.json');
+    const res = await fetch('./compagnonnage-data.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     _data = await res.json();
     document.dispatchEvent(new CustomEvent('pm:compagnonnage-ready'));
