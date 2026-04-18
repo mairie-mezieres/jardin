@@ -3,15 +3,6 @@
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-function _getPrefs() {
-  try {
-    const raw = localStorage.getItem('pm_preferences');
-    return raw ? JSON.parse(raw) : { modeDefault: 'exterieur' };
-  } catch {
-    return { modeDefault: 'exterieur' };
-  }
-}
-
 function _localDateString() {
   const today = new Date();
   return [
@@ -39,29 +30,46 @@ function _stadeLabel(statut) {
   return labels[statut] || statut;
 }
 
+// ─── Labels action / zone ────────────────────────────────────────────────────
+
+const _ACTION_LABELS = { si:'🏠 Semis serre', so:'☀️ Semis ext.', pl:'🌿 Plantation', rp:'↗️ Repiquage' };
+const _ZONE_LABELS   = { sn:'Serre Nord', sm:'Serre Centre', ss:'Serre Sud', pa:'Plein air', pt:'Potager' };
+
+function _zoneBadge(c) {
+  // Compat : anciennes cultures ont localisation='serre'|'exterieur', nouvelles ont zone
+  const zone = c.zone;
+  if (zone && _ZONE_LABELS[zone]) {
+    const isSerre = ['sn','sm','ss'].includes(zone);
+    const cls = isSerre ? 'serre' : 'exterieur';
+    return `<span class="pm-culture-card__badge pm-culture-card__badge--${cls}">${_ZONE_LABELS[zone]}</span>`;
+  }
+  if (c.localisation === 'serre')
+    return '<span class="pm-culture-card__badge pm-culture-card__badge--serre">🌱 Serre</span>';
+  return '<span class="pm-culture-card__badge pm-culture-card__badge--exterieur">☀️ Ext.</span>';
+}
+
 // ─── Rendu carte culture ─────────────────────────────────────────────────────
 
 function _renderCultureCard(c, vegMap, archived, inConflict) {
-  const veg   = vegMap[c.espece] || {};
-  const emoji = veg.e || '🌱';
-  const nom   = veg.n || c.espece;
-  const stade = archived ? _stadeLabel(c.statut) : _stadeFromDate(c.dateSemis);
-  const date  = new Date(c.dateSemis).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
-  const badge = c.localisation === 'serre'
-    ? '<span class="pm-culture-card__badge pm-culture-card__badge--serre">🌱 Serre</span>'
-    : '<span class="pm-culture-card__badge pm-culture-card__badge--exterieur">☀️ Ext.</span>';
-  const archivedClass = archived ? ' pm-culture-card--archived' : '';
-  const conflictBadge = inConflict
+  const veg    = vegMap[c.espece] || {};
+  const emoji  = veg.e || '🌱';
+  const nom    = veg.n || c.espece;
+  const stade  = archived ? _stadeLabel(c.statut) : _stadeFromDate(c.dateSemis);
+  const date   = new Date(c.dateSemis).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+  const actionLabel = c.action ? (_ACTION_LABELS[c.action] || c.action) : '';
+  const note   = c.note ? `<div class="pm-culture-card__note">${c.note}</div>` : '';
+  const archivedClass  = archived ? ' pm-culture-card--archived' : '';
+  const conflictBadge  = inConflict
     ? '<span class="companion-badge companion-badge--warned pm-conflict-badge" role="img" aria-label="Association déconseillée">⚠️ Association déconseillée</span>'
     : '';
   return `<div class="pm-culture-card${archivedClass}" data-id="${c.id}">
     <span class="pm-culture-card__icon">${emoji}</span>
     <div class="pm-culture-card__info">
       <div class="pm-culture-card__name">${nom}</div>
-      <div class="pm-culture-card__meta">Semé le ${date} · ${stade}</div>
-      ${conflictBadge}
+      <div class="pm-culture-card__meta">${date} · ${stade}${actionLabel ? ' · ' + actionLabel : ''}</div>
+      ${note}${conflictBadge}
     </div>
-    ${badge}
+    ${_zoneBadge(c)}
   </div>`;
 }
 
@@ -149,8 +157,6 @@ function _applyStatusAction(statut) {
 
 // ─── Bottom Sheet ────────────────────────────────────────────────────────────
 
-let _selectedMode = 'exterieur';
-
 function _buildEspeceSelect() {
   const sel = document.getElementById('pm-bs-espece');
   if (!sel || sel.options.length > 1) return;
@@ -168,15 +174,8 @@ function openBottomSheet() {
 
   _buildEspeceSelect();
 
-  // Pré-remplir date du jour (date locale, pas UTC)
   const dateInput = document.getElementById('pm-bs-date');
-  if (dateInput) {
-    dateInput.value = _localDateString();
-  }
-
-  // Pré-remplir mode depuis préférences
-  _selectedMode = _getPrefs().modeDefault || 'exterieur';
-  _updateModeButtons(_selectedMode);
+  if (dateInput) dateInput.value = _localDateString();
 
   overlay.classList.add('bs-open');
   document.getElementById('pm-bs-espece')?.focus();
@@ -187,13 +186,6 @@ function closeBottomSheet() {
   if (!overlay) return;
   overlay.classList.remove('bs-open');
   document.getElementById('pm-bs-form')?.reset();
-}
-
-function _updateModeButtons(mode) {
-  document.querySelectorAll('.bs-mode-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.mode === mode);
-    btn.setAttribute('aria-pressed', btn.dataset.mode === mode ? 'true' : 'false');
-  });
 }
 
 // ─── Initialisation des événements ──────────────────────────────────────────
@@ -209,14 +201,6 @@ function _initEvents() {
     if (e.target === e.currentTarget) closeBottomSheet();
   });
 
-  // Boutons mode
-  document.querySelectorAll('.bs-mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      _selectedMode = btn.dataset.mode;
-      _updateModeButtons(_selectedMode);
-    });
-  });
-
   // Soumission formulaire ajout culture
   document.getElementById('pm-bs-form')?.addEventListener('submit', e => {
     e.preventDefault();
@@ -226,12 +210,18 @@ function _initEvents() {
     const dateSemis = document.getElementById('pm-bs-date')?.value;
     if (!espece || !dateSemis) return;
 
+    const action = document.getElementById('pm-bs-action')?.value || '';
+    const zone   = document.getElementById('pm-bs-zone')?.value   || '';
+    const note   = document.getElementById('pm-bs-note')?.value?.trim() || '';
+
     window.CulturesModule.add({
       espece,
       dateSemis,
-      localisation: _selectedMode,
-      statut:       'semee',
-      dateStatut:   _localDateString()
+      action,
+      zone,
+      note,
+      statut:     'semee',
+      dateStatut: _localDateString()
     });
 
     closeBottomSheet();

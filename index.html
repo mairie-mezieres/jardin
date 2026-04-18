@@ -233,8 +233,6 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
   <button class="nav-btn" onclick="showTab('tableau',this)">Tableau</button>
   <button class="nav-btn" onclick="showTab('fiches',this)">Légumes</button>
   <button class="nav-btn" onclick="showTab('calendrier',this)">Calendrier</button>
-  <button class="nav-btn" onclick="showTab('suivi',this)">Mon suivi</button>
-  <button class="nav-btn" onclick="showTab('recoltes',this)">Récoltes</button>
   <button class="nav-btn" onclick="showTab('rotation',this)">Rotation</button>
   <button class="nav-btn" onclick="showTab('nuisibles',this)">Nuisibles</button>
   <button class="nav-btn" onclick="showTab('compagnonnage',this)">Compagnonnage</button>
@@ -288,13 +286,31 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
         <select id="pm-bs-espece" name="espece" required>
           <option value="" disabled selected>— Choisir une espèce —</option>
         </select>
-        <label for="pm-bs-date">Date de semis</label>
-        <input type="date" id="pm-bs-date" name="dateSemis" required>
-        <label>Localisation</label>
-        <div class="bs-mode-toggle" role="radiogroup" aria-label="Localisation">
-          <button type="button" class="bs-mode-btn touch-target" data-mode="exterieur">☀️ Extérieur</button>
-          <button type="button" class="bs-mode-btn touch-target" data-mode="serre">🌱 Serre</button>
+        <div class="bs-row">
+          <div class="bs-field">
+            <label for="pm-bs-action">Action</label>
+            <select id="pm-bs-action" name="action">
+              <option value="si">🏠 Semis serre</option>
+              <option value="so">☀️ Semis extérieur</option>
+              <option value="pl">🌿 Plantation</option>
+              <option value="rp">↗️ Repiquage</option>
+            </select>
+          </div>
+          <div class="bs-field">
+            <label for="pm-bs-date">Date</label>
+            <input type="date" id="pm-bs-date" name="dateSemis" required>
+          </div>
         </div>
+        <label for="pm-bs-zone">Zone</label>
+        <select id="pm-bs-zone" name="zone">
+          <option value="sn">Serre Nord ☀️</option>
+          <option value="sm">Serre Centre 🌤️</option>
+          <option value="ss">Serre Sud 🌥️</option>
+          <option value="pa">Plein air</option>
+          <option value="pt">Potager</option>
+        </select>
+        <label for="pm-bs-note">Note <span style="font-weight:400;color:#888">(variété, quantité…)</span></label>
+        <input type="text" id="pm-bs-note" name="note" placeholder="ex : Cœur de bœuf, 6 plants">
         <button type="submit" class="bs-submit touch-target">Enregistrer</button>
         <button type="button" class="bs-cancel touch-target" id="pm-bs-cancel">Annuler</button>
       </form>
@@ -431,37 +447,6 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
   <div class="cal-wrap"><table class="cal-table" id="full-cal"></table></div>
 </section>
 
-<section id="tab-suivi">
-  <h1 class="section-title">Mon suivi</h1>
-  <p class="section-sub">Enregistre semis et plantations — suis leur stade de développement.</p>
-  <div class="aform">
-    <div class="card-title"><span>➕</span> Nouveau semis / plantation</div>
-    <div class="frow">
-      <div class="fg" style="flex:2"><label>Légume</label><select id="sw-v"><option value="">Choisir…</option></select></div>
-      <div class="fg"><label>Action</label><select id="sw-a"><option value="si">Semis serre</option><option value="so">Semis extérieur</option><option value="pl">Plantation</option><option value="rp">Repiquage</option></select></div>
-    </div>
-    <div class="frow">
-      <div class="fg"><label>Date</label><input type="date" id="sw-d"></div>
-      <div class="fg"><label>Zone</label><select id="sw-l"><option value="sn">Serre Nord ☀️</option><option value="sm">Serre Centre 🌤️</option><option value="ss">Serre Sud 🌥️</option><option value="pa">Plein air</option><option value="pt">Potager</option></select></div>
-      <div class="fg" style="flex:2"><label>Note</label><input type="text" id="sw-n" placeholder="Variété, quantité…"></div>
-    </div>
-    <button class="btn-add" onclick="addSow()">✅ Enregistrer</button>
-  </div>
-  <div class="slist" id="sow-list"></div>
-</section>
-
-<section id="tab-recoltes">
-  <h1 class="section-title">Calendrier des récoltes</h1>
-  <p class="section-sub">Focus sur les périodes de récolte.</p>
-  <div class="cal-legend">
-    <div class="cl-item"><div class="cl-dot d-ha"></div>Récolte possible</div>
-    <div class="cl-item"><div class="cl-dot d-pk"></div>Récolte optimale</div>
-    <div class="cl-item"><div class="cl-dot d-si"></div>Semis serre</div>
-    <div class="cl-item"><div class="cl-dot d-so"></div>Semis ext.</div>
-    <div class="cl-item"><div class="cl-dot d-pl"></div>Plantation</div>
-  </div>
-  <div class="cal-wrap"><table class="cal-table" id="harvest-cal"></table></div>
-</section>
 
 <section id="tab-rotation">
   <h1 class="section-title">Rotation des cultures</h1>
@@ -606,12 +591,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderMNow();
   buildCal('mini-cal',true);
   buildCal('full-cal',false);
-  buildCal('harvest-cal',false);
   buildRotation();
   buildPests();
-  renderSowings();
-  populateSel();
-  document.getElementById('sw-d').value=new Date().toISOString().split('T')[0];
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./service-worker.js')
       .catch(err => console.warn('SW registration failed:', err));
@@ -921,11 +902,14 @@ function closeMov(e){if(e.target===document.getElementById('mov'))document.getEl
 function closeMbtn(){document.getElementById('mov').classList.remove('open');}
 function quickAdd(id){
   closeMbtn();
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-suivi').classList.add('active');
-  document.querySelectorAll('.nav-btn')[3].classList.add('active');
-  document.getElementById('sw-v').value=id;
+  const jBtn=document.querySelector('.nav-btn[onclick*="\'journal\'"]');
+  showTab('journal',jBtn);
+  // Pré-sélectionner l'espèce dans le bottom sheet PM
+  if(window.CulturesUI){
+    window.CulturesUI.openBottomSheet();
+    const sel=document.getElementById('pm-bs-espece');
+    if(sel)sel.value=id;
+  }
 }
 function quickShowPousses(id){
   closeMbtn();
@@ -934,56 +918,6 @@ function quickShowPousses(id){
   if(window.PoussesUI&&window.PoussesUI.showEspece)window.PoussesUI.showEspece(id);
 }
 
-// ═══════════════════════════════════════════════════
-// SUIVI
-// ═══════════════════════════════════════════════════
-function populateSel(){
-  const s=document.getElementById('sw-v');
-  [...VEG].sort((a,b)=>a.n.localeCompare(b.n)).forEach(v=>s.innerHTML+=`<option value="${v.id}">${v.e} ${v.n}</option>`);
-}
-function addSow(){
-  const vid=document.getElementById('sw-v').value;
-  const act=document.getElementById('sw-a').value;
-  const date=document.getElementById('sw-d').value;
-  const loc=document.getElementById('sw-l').value;
-  const note=document.getElementById('sw-n').value;
-  if(!vid||!date)return alert('Sélectionne un légume et une date.');
-  const v=VEG.find(x=>x.id===vid);
-  sowings.unshift({id:Date.now(),vid,act,date,loc,note,vn:v.n,ve:v.e,dth:v.dth});
-  saveSow();renderSowings();
-  document.getElementById('sw-n').value='';
-}
-function delSow(id){sowings=sowings.filter(s=>s.id!==id);saveSow();renderSowings();}
-function getStage(date,dth){
-  const el=Math.floor((new Date()-new Date(date))/86400000);
-  const p=el/dth;
-  if(p<0)return{l:'Planifié',c:'s0'};
-  if(p<0.15)return{l:'Germination 🌱',c:'s1'};
-  if(p<0.5)return{l:'Croissance 🌿',c:'s2'};
-  if(p<0.85)return{l:'Mature 🌳',c:'s3'};
-  return{l:'À récolter ! 🌟',c:'s4'};
-}
-const AL={'si':'Semis serre','so':'Semis ext.','pl':'Plantation','rp':'Repiquage'};
-const LL={'sn':'Serre Nord ☀️','sm':'Serre Centre 🌤️','ss':'Serre Sud 🌥️','pa':'Plein air','pt':'Potager'};
-function renderSowings(){
-  const ct=document.getElementById('sow-list');
-  if(!sowings.length){ct.innerHTML='<div class="empty"><span class="eicon">🌱</span>Aucun semis enregistré.<br>Commence par en ajouter un !</div>';return;}
-  ct.innerHTML=sowings.map(s=>{
-    const st=getStage(s.date,s.dth);
-    const hd=new Date(new Date(s.date).getTime()+s.dth*86400000);
-    const dl=Math.max(0,Math.floor((hd-new Date())/86400000));
-    return`<div class="sitem">
-      <span class="sicon">${s.ve}</span>
-      <div class="sinfo"><div class="sname">${s.vn}</div>
-        <div class="sdetail">${AL[s.act]||s.act} · ${new Date(s.date).toLocaleDateString('fr-FR')} · ${LL[s.loc]||s.loc}${s.note?' · '+s.note:''}</div>
-      </div>
-      <div class="sright"><span class="sbadge ${st.c}">${st.l}</span>
-        <span class="dtxt">${dl>0?'Récolte dans ~'+dl+' j':'Prêt à récolter !'}</span>
-      </div>
-      <button class="dbtn" onclick="delSow(${s.id})">🗑</button>
-    </div>`;
-  }).join('');
-}
 
 // ═══════════════════════════════════════════════════
 // ROTATION

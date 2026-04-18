@@ -382,6 +382,7 @@
 .pm-culture-card__info  { flex: 1; min-width: 0; }
 .pm-culture-card__name  { font-weight: 700; font-size: 0.95rem; color: var(--color-text); }
 .pm-culture-card__meta  { font-size: 0.78rem; color: #888; margin-top: 2px; }
+.pm-culture-card__note  { font-size: 0.78rem; color: #666; margin-top: 3px; font-style: italic; }
 .pm-culture-card__badge {
   font-size:     0.72rem;
   padding:       3px 8px;
