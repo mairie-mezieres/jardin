@@ -172,6 +172,36 @@
       "especes_cibles": ["tomate", "courgette", "concombre", "poivron"],
       "mode": "exterieur",
       "source_fr": "FR10"
+    },
+    {
+      "id": "surveillance-plantules-001",
+      "version": "1.0",
+      "condition": { "generic": true },
+      "action": "Observez vos semis : cherchez les premiers signes de fontes de semis (tige noircie à la base)",
+      "priorité": "basse",
+      "especes_cibles": ["*"],
+      "mode": "tous",
+      "source_fr": "FR10"
+    },
+    {
+      "id": "arrosage-serre-matin-001",
+      "version": "1.0",
+      "condition": { "generic": true },
+      "action": "Arrosez le matin en serre — l'humidité nocturne favorise les maladies fongiques",
+      "priorité": "basse",
+      "especes_cibles": ["*"],
+      "mode": "serre",
+      "source_fr": "FR11"
+    },
+    {
+      "id": "binage-apres-pluie-001",
+      "version": "1.0",
+      "condition": { "precipitation_probability_gte": 60, "horizon": "24h" },
+      "action": "Profitez de la pluie pour biner dès qu'elle sera passée — terre meuble = moins de mauvaises herbes",
+      "priorité": "basse",
+      "especes_cibles": ["*"],
+      "mode": "exterieur",
+      "source_fr": "FR10"
     }
   ]
 }

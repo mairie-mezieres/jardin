@@ -137,7 +137,6 @@ document.addEventListener('pm:weather-updated', (e) => {
   renderRecoCards();
 });
 
-document.addEventListener('pm:mode-changed',    renderRecoCards);
 document.addEventListener('pm:culture-added',   renderRecoCards);
 document.addEventListener('pm:culture-updated', renderRecoCards);
 

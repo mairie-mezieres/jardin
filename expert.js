@@ -1,10 +1,9 @@
 // expert.js — Moteur de Recommandations (Système Expert)
-// Écoute pm:weather-updated et pm:mode-changed (AR3, NFR17)
+// Écoute pm:weather-updated et pm:culture-added/updated (AR3, NFR17)
 // Zéro import croisé — accès aux modules via window.X?.method()
 
 let _rules           = [];
 let _lastWeatherData = null;
-let _currentMode     = 'exterieur';
 
 // ─── Chargement des règles ───────────────────────────────────────────────────
 
@@ -74,12 +73,18 @@ function getRecommandations() {
     const daily = _lastWeatherData?.daily || null;
 
     // Utilise getActive() qui filtre statut !== 'recoltee' (FR28)
-    const activeCultures = (window.CulturesModule?.getActive() || []).map(c => c.espece);
+    const actives = window.CulturesModule?.getActive() || [];
+    const activeCultures = actives.map(c => c.espece);
+
+    // Dériver les modes depuis les zones des cultures (sn/sm/ss=serre, pa/pt=ext)
+    const serreZones = ['sn', 'sm', 'ss'];
+    const hasSerreC  = actives.some(c => serreZones.includes(c.zone) || c.localisation === 'serre');
+    const hasExtC    = actives.some(c => (c.zone && !serreZones.includes(c.zone)) || c.localisation === 'exterieur' || (!c.zone && !c.localisation));
 
     const matching = _rules.filter(rule => {
-      // 1. Filtre mode (FR11)
-      if (rule.mode === 'serre'     && _currentMode !== 'serre')     return false;
-      if (rule.mode === 'exterieur' && _currentMode !== 'exterieur') return false;
+      // 1. Filtre mode : inclure si l'utilisateur a des cultures dans ce mode
+      if (rule.mode === 'serre'     && !hasSerreC) return false;
+      if (rule.mode === 'exterieur' && !hasExtC)   return false;
 
       // 2. Filtre espèces cibles (FR10)
       const cibles = rule.especes_cibles || [];
@@ -107,15 +112,7 @@ document.addEventListener('pm:weather-updated', (e) => {
   if (e.detail?.data) _lastWeatherData = e.detail.data;
 });
 
-document.addEventListener('pm:mode-changed', (e) => {
-  if (e.detail?.mode) _currentMode = e.detail.mode;
-});
-
 document.addEventListener('DOMContentLoaded', async () => {
-  // Initialiser le mode depuis PrefsModule si disponible
-  if (window.PrefsModule) {
-    _currentMode = window.PrefsModule.get().modeDefault || 'exterieur';
-  }
   // Charger météo déjà en cache si disponible
   if (window.MeteoModule) {
     try {
