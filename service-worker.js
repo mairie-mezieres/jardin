@@ -1,7 +1,7 @@
 // service-worker.js — Potager Magique
 // Précache assets statiques + stale-while-revalidate pour Open-Meteo
 
-const CACHE_VERSION = 'pm-v1';
+const CACHE_VERSION = 'pm-v6';
 
 const STATIC_ASSETS = [
   '/',

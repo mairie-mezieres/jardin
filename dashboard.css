@@ -372,17 +372,30 @@
   padding:       14px 16px;
   margin-bottom: 10px;
   box-shadow:    0 1px 4px rgba(0,0,0,0.08);
-  display:       flex;
-  align-items:   center;
-  gap:           12px;
   cursor:        pointer;
 }
 
+.pm-culture-card__header {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  margin-bottom: 10px;
+}
+
+.pm-culture-card__title {
+  flex:        1;
+  min-width:   0;
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  flex-wrap:   wrap;
+}
+
 .pm-culture-card__icon  { font-size: 1.6rem; flex-shrink: 0; }
-.pm-culture-card__info  { flex: 1; min-width: 0; }
 .pm-culture-card__name  { font-weight: 700; font-size: 0.95rem; color: var(--color-text); }
-.pm-culture-card__meta  { font-size: 0.78rem; color: #888; margin-top: 2px; }
-.pm-culture-card__note  { font-size: 0.78rem; color: #666; margin-top: 3px; font-style: italic; }
+.pm-culture-card__body  { padding-left: 2px; }
+.pm-culture-card__meta  { font-size: 0.78rem; color: #888; margin-bottom: 8px; }
+.pm-culture-card__note  { font-size: 0.78rem; color: #666; margin-bottom: 6px; font-style: italic; }
 .pm-culture-card__badge {
   font-size:     0.72rem;
   padding:       3px 8px;
@@ -392,6 +405,82 @@
 }
 .pm-culture-card__badge--serre    { background: rgba(45,106,45,.12);  color: var(--color-primary); }
 .pm-culture-card__badge--exterieur{ background: rgba(224,119,0,.10);  color: var(--color-priority-medium); }
+
+/* Statut badge (repiquée, floraison) */
+.pm-statut-badge {
+  font-size:     0.72rem;
+  padding:       2px 7px;
+  border-radius: 20px;
+  background:    #e8f5e9;
+  color:         #2e7d32;
+  font-weight:   600;
+}
+
+/* Barre de progression stades */
+.pm-prog {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  margin:      4px 0 6px;
+}
+
+.pm-prog__track {
+  flex:         1;
+  height:       6px;
+  background:   #f0f0f0;
+  border-radius: 6px;
+  position:     relative;
+}
+
+.pm-prog__fill {
+  height:          6px;
+  background:      linear-gradient(90deg, #6db33f, #2D6A2D);
+  border-radius:   6px;
+  transition:      width 0.4s ease;
+  position:        absolute;
+  left:            0;
+}
+
+.pm-prog__dot {
+  width:         10px;
+  height:        10px;
+  border-radius: 50%;
+  background:    #ddd;
+  border:        2px solid #fff;
+  position:      absolute;
+  top:           50%;
+  transform:     translate(-50%, -50%);
+  z-index:       1;
+}
+.pm-prog__dot--done { background: var(--color-primary); }
+
+.pm-prog__label {
+  font-size:   0.72rem;
+  color:       var(--color-primary);
+  font-weight: 600;
+  white-space: nowrap;
+  min-width:   62px;
+  text-align:  right;
+}
+
+/* Badge récolte */
+.pm-harvest-badge {
+  display:       inline-block;
+  font-size:     0.75rem;
+  color:         #888;
+  margin-top:    2px;
+}
+.pm-harvest-badge--soon  { color: #e65100; font-weight: 600; }
+.pm-harvest-badge--ready { color: #2e7d32; font-weight: 700; font-size: 0.8rem; }
+
+/* Conflict badge dans carte */
+.pm-conflict-badge {
+  display:    block;
+  font-size:  0.75rem;
+  color:      #b71c1c;
+  margin-top: 4px;
+  font-weight: 600;
+}
 
 /* ====================================================================
    BOTTOM SHEET — Story 2.2

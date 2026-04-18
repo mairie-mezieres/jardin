@@ -48,28 +48,94 @@ function _zoneBadge(c) {
   return '<span class="pm-culture-card__badge pm-culture-card__badge--exterieur">☀️ Ext.</span>';
 }
 
+// ─── Progression stades ──────────────────────────────────────────────────────
+
+const _STADES_PROG = [
+  { label: 'Semis',      maxJ: 7  },
+  { label: 'Plantule',   maxJ: 21 },
+  { label: 'Croissance', maxJ: 45 },
+  { label: 'Récolte',    maxJ: Infinity }
+];
+
+function _stadeIndex(jours) {
+  if (jours <= 7)  return 0;
+  if (jours <= 21) return 1;
+  if (jours <= 45) return 2;
+  return 3;
+}
+
+function _progressBar(jours) {
+  const idx  = _stadeIndex(jours);
+  const pct  = Math.round((idx / (_STADES_PROG.length - 1)) * 100);
+  const dots = _STADES_PROG.map((s, i) =>
+    `<span class="pm-prog__dot${i <= idx ? ' pm-prog__dot--done' : ''}" style="left:${Math.round(i/(_STADES_PROG.length-1)*100)}%" title="${s.label}"></span>`
+  ).join('');
+  return `<div class="pm-prog">
+    <div class="pm-prog__track">
+      <div class="pm-prog__fill" style="width:${pct}%"></div>
+      ${dots}
+    </div>
+    <span class="pm-prog__label">${_STADES_PROG[idx].label}</span>
+  </div>`;
+}
+
+function _harvestCountdown(c, veg) {
+  if (!veg.dth) return '';
+  const jours = Math.floor((Date.now() - new Date(c.dateSemis).getTime()) / 86400000);
+  const restants = veg.dth - jours;
+  if (c.statut === 'recoltee') return '';
+  if (restants <= 0) return '<span class="pm-harvest-badge pm-harvest-badge--ready">🍅 Prêt à récolter !</span>';
+  if (restants <= 14) return `<span class="pm-harvest-badge pm-harvest-badge--soon">⏳ Récolte dans ~${restants}j</span>`;
+  return `<span class="pm-harvest-badge">Récolte dans ~${restants}j</span>`;
+}
+
 // ─── Rendu carte culture ─────────────────────────────────────────────────────
 
 function _renderCultureCard(c, vegMap, archived, inConflict) {
   const veg    = vegMap[c.espece] || {};
   const emoji  = veg.e || '🌱';
   const nom    = veg.n || c.espece;
-  const stade  = archived ? _stadeLabel(c.statut) : _stadeFromDate(c.dateSemis);
+  const jours  = Math.floor((Date.now() - new Date(c.dateSemis).getTime()) / 86400000);
   const date   = new Date(c.dateSemis).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
   const actionLabel = c.action ? (_ACTION_LABELS[c.action] || c.action) : '';
   const note   = c.note ? `<div class="pm-culture-card__note">${c.note}</div>` : '';
-  const archivedClass  = archived ? ' pm-culture-card--archived' : '';
-  const conflictBadge  = inConflict
-    ? '<span class="companion-badge companion-badge--warned pm-conflict-badge" role="img" aria-label="Association déconseillée">⚠️ Association déconseillée</span>'
+  const archivedClass = archived ? ' pm-culture-card--archived' : '';
+
+  if (archived) {
+    const statutLabel = _stadeLabel(c.statut);
+    return `<div class="pm-culture-card${archivedClass}" data-id="${c.id}">
+      <span class="pm-culture-card__icon">${emoji}</span>
+      <div class="pm-culture-card__info">
+        <div class="pm-culture-card__name">${nom}</div>
+        <div class="pm-culture-card__meta">${date} · ${statutLabel}${actionLabel ? ' · ' + actionLabel : ''}</div>
+        ${note}
+      </div>
+      ${_zoneBadge(c)}
+    </div>`;
+  }
+
+  const conflictBadge = inConflict
+    ? '<div class="pm-conflict-badge">⚠️ Association déconseillée</div>'
     : '';
-  return `<div class="pm-culture-card${archivedClass}" data-id="${c.id}">
-    <span class="pm-culture-card__icon">${emoji}</span>
-    <div class="pm-culture-card__info">
-      <div class="pm-culture-card__name">${nom}</div>
-      <div class="pm-culture-card__meta">${date} · ${stade}${actionLabel ? ' · ' + actionLabel : ''}</div>
-      ${note}${conflictBadge}
+  const statutBadge = c.statut !== 'semee'
+    ? `<span class="pm-statut-badge">${_stadeLabel(c.statut)}</span>` : '';
+  const harvest = _harvestCountdown(c, veg);
+
+  return `<div class="pm-culture-card" data-id="${c.id}">
+    <div class="pm-culture-card__header">
+      <span class="pm-culture-card__icon">${emoji}</span>
+      <div class="pm-culture-card__title">
+        <span class="pm-culture-card__name">${nom}</span>
+        ${statutBadge}
+      </div>
+      ${_zoneBadge(c)}
     </div>
-    ${_zoneBadge(c)}
+    <div class="pm-culture-card__body">
+      <div class="pm-culture-card__meta">Semé le ${date}${actionLabel ? ' · ' + actionLabel : ''} · J+${jours}</div>
+      ${note}
+      ${_progressBar(jours)}
+      ${harvest}${conflictBadge}
+    </div>
   </div>`;
 }
 
