@@ -1,0 +1,262 @@
+{
+  "version": 1,
+  "familles": [
+    { "id": "solanees",       "label": "Solanées",        "especes": ["tomate", "poivron", "aubergine"] },
+    { "id": "cucurbitacees",  "label": "Cucurbitacées",   "especes": ["concombre", "courgette", "courge"] },
+    { "id": "brassicacees",   "label": "Brassicacées",    "especes": ["radis", "chou", "brocoli"] },
+    { "id": "legumineuses",   "label": "Légumineuses",    "especes": ["haricot", "pois", "feve"] },
+    { "id": "apiacees",       "label": "Apiacées",        "especes": ["carotte", "persil", "fenouil"] },
+    { "id": "alliacees",      "label": "Alliacées",       "especes": ["oignon", "ail", "poireau"] },
+    { "id": "asteracees",     "label": "Astéracées",      "especes": ["laitue", "chichoree"] },
+    { "id": "chenopodiacees", "label": "Chénopodiacées",  "especes": ["epinard", "blette"] }
+  ],
+  "especes": [
+    {
+      "id": "tomate", "nom": "Tomate", "famille": "solanees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/solanees/tomate/germination.webp",
+        "cotyledons":      "assets/pousses/solanees/tomate/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/solanees/tomate/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron", "chenapode"]
+    },
+    {
+      "id": "poivron", "nom": "Poivron", "famille": "solanees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/solanees/poivron/germination.webp",
+        "cotyledons":      "assets/pousses/solanees/poivron/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/solanees/poivron/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron"]
+    },
+    {
+      "id": "aubergine", "nom": "Aubergine", "famille": "solanees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/solanees/aubergine/germination.webp",
+        "cotyledons":      "assets/pousses/solanees/aubergine/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/solanees/aubergine/vraies-feuilles.webp"
+      },
+      "confusions": ["chenapode"]
+    },
+    {
+      "id": "concombre", "nom": "Concombre", "famille": "cucurbitacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/cucurbitacees/concombre/germination.webp",
+        "cotyledons":      "assets/pousses/cucurbitacees/concombre/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/cucurbitacees/concombre/vraies-feuilles.webp"
+      },
+      "confusions": ["liseron"]
+    },
+    {
+      "id": "courgette", "nom": "Courgette", "famille": "cucurbitacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/cucurbitacees/courgette/germination.webp",
+        "cotyledons":      "assets/pousses/cucurbitacees/courgette/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/cucurbitacees/courgette/vraies-feuilles.webp"
+      },
+      "confusions": ["liseron"]
+    },
+    {
+      "id": "courge", "nom": "Courge", "famille": "cucurbitacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/cucurbitacees/courge/germination.webp",
+        "cotyledons":      "assets/pousses/cucurbitacees/courge/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/cucurbitacees/courge/vraies-feuilles.webp"
+      },
+      "confusions": ["liseron"]
+    },
+    {
+      "id": "radis", "nom": "Radis", "famille": "brassicacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/brassicacees/radis/germination.webp",
+        "cotyledons":      "assets/pousses/brassicacees/radis/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/brassicacees/radis/vraies-feuilles.webp"
+      },
+      "confusions": ["laiteron"]
+    },
+    {
+      "id": "chou", "nom": "Chou", "famille": "brassicacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/brassicacees/chou/germination.webp",
+        "cotyledons":      "assets/pousses/brassicacees/chou/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/brassicacees/chou/vraies-feuilles.webp"
+      },
+      "confusions": ["laiteron"]
+    },
+    {
+      "id": "brocoli", "nom": "Brocoli", "famille": "brassicacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/brassicacees/brocoli/germination.webp",
+        "cotyledons":      "assets/pousses/brassicacees/brocoli/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/brassicacees/brocoli/vraies-feuilles.webp"
+      },
+      "confusions": ["laiteron"]
+    },
+    {
+      "id": "haricot", "nom": "Haricot", "famille": "legumineuses",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/legumineuses/haricot/germination.webp",
+        "cotyledons":      "assets/pousses/legumineuses/haricot/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/legumineuses/haricot/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron"]
+    },
+    {
+      "id": "pois", "nom": "Pois", "famille": "legumineuses",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/legumineuses/pois/germination.webp",
+        "cotyledons":      "assets/pousses/legumineuses/pois/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/legumineuses/pois/vraies-feuilles.webp"
+      },
+      "confusions": ["liseron"]
+    },
+    {
+      "id": "feve", "nom": "Fève", "famille": "legumineuses",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/legumineuses/feve/germination.webp",
+        "cotyledons":      "assets/pousses/legumineuses/feve/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/legumineuses/feve/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron"]
+    },
+    {
+      "id": "carotte", "nom": "Carotte", "famille": "apiacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/apiacees/carotte/germination.webp",
+        "cotyledons":      "assets/pousses/apiacees/carotte/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/apiacees/carotte/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron", "laiteron"]
+    },
+    {
+      "id": "persil", "nom": "Persil", "famille": "apiacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/apiacees/persil/germination.webp",
+        "cotyledons":      "assets/pousses/apiacees/persil/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/apiacees/persil/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron"]
+    },
+    {
+      "id": "fenouil", "nom": "Fenouil", "famille": "apiacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/apiacees/fenouil/germination.webp",
+        "cotyledons":      "assets/pousses/apiacees/fenouil/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/apiacees/fenouil/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron"]
+    },
+    {
+      "id": "oignon", "nom": "Oignon", "famille": "alliacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/alliacees/oignon/germination.webp",
+        "cotyledons":      "assets/pousses/alliacees/oignon/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/alliacees/oignon/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron"]
+    },
+    {
+      "id": "ail", "nom": "Ail", "famille": "alliacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/alliacees/ail/germination.webp",
+        "cotyledons":      "assets/pousses/alliacees/ail/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/alliacees/ail/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron"]
+    },
+    {
+      "id": "poireau", "nom": "Poireau", "famille": "alliacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/alliacees/poireau/germination.webp",
+        "cotyledons":      "assets/pousses/alliacees/poireau/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/alliacees/poireau/vraies-feuilles.webp"
+      },
+      "confusions": ["mouron"]
+    },
+    {
+      "id": "laitue", "nom": "Laitue", "famille": "asteracees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/asteracees/laitue/germination.webp",
+        "cotyledons":      "assets/pousses/asteracees/laitue/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/asteracees/laitue/vraies-feuilles.webp"
+      },
+      "confusions": ["laiteron", "chenapode"]
+    },
+    {
+      "id": "chichoree", "nom": "Chicorée", "famille": "asteracees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/asteracees/chichoree/germination.webp",
+        "cotyledons":      "assets/pousses/asteracees/chichoree/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/asteracees/chichoree/vraies-feuilles.webp"
+      },
+      "confusions": ["laiteron"]
+    },
+    {
+      "id": "epinard", "nom": "Épinard", "famille": "chenopodiacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/chenopodiacees/epinard/germination.webp",
+        "cotyledons":      "assets/pousses/chenopodiacees/epinard/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/chenopodiacees/epinard/vraies-feuilles.webp"
+      },
+      "confusions": ["chenapode"]
+    },
+    {
+      "id": "blette", "nom": "Blette", "famille": "chenopodiacees",
+      "stades": ["germination", "cotyledons", "vraies-feuilles"],
+      "photos": {
+        "germination":     "assets/pousses/chenopodiacees/blette/germination.webp",
+        "cotyledons":      "assets/pousses/chenopodiacees/blette/cotyledons.webp",
+        "vraies-feuilles": "assets/pousses/chenopodiacees/blette/vraies-feuilles.webp"
+      },
+      "confusions": ["chenapode"]
+    }
+  ],
+  "mauvaisesHerbes": [
+    {
+      "id":   "mouron",
+      "nom":  "Mouron blanc",
+      "photo":"assets/pousses/mauvaises-herbes/mouron.webp"
+    },
+    {
+      "id":   "chenapode",
+      "nom":  "Chénopode blanc",
+      "photo":"assets/pousses/mauvaises-herbes/chenapode.webp"
+    },
+    {
+      "id":   "laiteron",
+      "nom":  "Laiteron",
+      "photo":"assets/pousses/mauvaises-herbes/laiteron.webp"
+    },
+    {
+      "id":   "liseron",
+      "nom":  "Liseron",
+      "photo":"assets/pousses/mauvaises-herbes/liseron.webp"
+    },
+    {
+      "id":   "ortie",
+      "nom":  "Ortie",
+      "photo":"assets/pousses/mauvaises-herbes/ortie.webp"
+    }
+  ]
+}

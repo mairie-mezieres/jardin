@@ -1,0 +1,177 @@
+{
+  "version": "1.0",
+  "updated": "2026-04-17",
+  "description": "Règles agronomiques Potager Magique — modifiables sans refactoring (NFR16, AR6)",
+  "rules": [
+    {
+      "id": "gel-basilic-ext-001",
+      "version": "1.0",
+      "condition": { "temperature_min_lte": 5, "horizon": "48h" },
+      "action": "Rentrez le basilic — le gel léger est létal dès 5°C",
+      "priorité": "haute",
+      "especes_cibles": ["basilic"],
+      "mode": "exterieur",
+      "source_fr": "FR5"
+    },
+    {
+      "id": "gel-tomate-poivron-ext-001",
+      "version": "1.0",
+      "condition": { "temperature_min_lte": 2, "horizon": "48h" },
+      "action": "Couvrez tomates et poivrons avec voile de forçage ce soir",
+      "priorité": "haute",
+      "especes_cibles": ["tomate", "poivron"],
+      "mode": "exterieur",
+      "source_fr": "FR5"
+    },
+    {
+      "id": "gel-courgette-concombre-haricot-ext-001",
+      "version": "1.0",
+      "condition": { "temperature_min_lte": 3, "horizon": "48h" },
+      "action": "Protégez courgettes, concombres et haricots du gel",
+      "priorité": "haute",
+      "especes_cibles": ["courgette", "concombre", "haricot"],
+      "mode": "exterieur",
+      "source_fr": "FR5"
+    },
+    {
+      "id": "gel-radis-ext-001",
+      "version": "1.0",
+      "condition": { "temperature_min_lte": -2, "horizon": "48h" },
+      "action": "Protégez les jeunes plants de radis avec un voile léger",
+      "priorité": "moyenne",
+      "especes_cibles": ["radis"],
+      "mode": "exterieur",
+      "source_fr": "FR5"
+    },
+    {
+      "id": "canicule-laitue-radis-ext-001",
+      "version": "1.0",
+      "condition": { "temperature_max_gte": 25, "horizon": "24h" },
+      "action": "Ombragez laitues et radis — risque de montée en graine",
+      "priorité": "haute",
+      "especes_cibles": ["laitue", "radis"],
+      "mode": "exterieur",
+      "source_fr": "FR6"
+    },
+    {
+      "id": "canicule-arrosage-tomate-courgette-ext-001",
+      "version": "1.0",
+      "condition": { "temperature_max_gte": 30, "horizon": "24h" },
+      "action": "Arrosez copieusement au pied avant 10h — chaleur intense",
+      "priorité": "haute",
+      "especes_cibles": ["tomate", "courgette", "concombre"],
+      "mode": "exterieur",
+      "source_fr": "FR6"
+    },
+    {
+      "id": "canicule-poivron-ext-001",
+      "version": "1.0",
+      "condition": { "temperature_max_gte": 36, "horizon": "24h" },
+      "action": "Ombragez légèrement les poivrons et arrosez au pied",
+      "priorité": "haute",
+      "especes_cibles": ["poivron"],
+      "mode": "exterieur",
+      "source_fr": "FR6"
+    },
+    {
+      "id": "ventilation-serre-tomate-poivron-001",
+      "version": "1.0",
+      "condition": { "temperature_max_gte": 28, "horizon": "24h" },
+      "action": "Ouvrez la serre dès 9h — risque d'étuffement pour tomates et poivrons",
+      "priorité": "haute",
+      "especes_cibles": ["tomate", "poivron"],
+      "mode": "serre",
+      "source_fr": "FR11"
+    },
+    {
+      "id": "ventilation-serre-concombre-courgette-001",
+      "version": "1.0",
+      "condition": { "temperature_max_gte": 30, "horizon": "24h" },
+      "action": "Ventilez la serre — canicule critique pour concombres et courgettes",
+      "priorité": "haute",
+      "especes_cibles": ["concombre", "courgette"],
+      "mode": "serre",
+      "source_fr": "FR11"
+    },
+    {
+      "id": "ventilation-serre-laitue-001",
+      "version": "1.0",
+      "condition": { "temperature_max_gte": 22, "horizon": "24h" },
+      "action": "Aérez la serre — les laitues boltent vite en chaleur confinée",
+      "priorité": "moyenne",
+      "especes_cibles": ["laitue"],
+      "mode": "serre",
+      "source_fr": "FR11"
+    },
+    {
+      "id": "haricot-saints-de-glace-ext-001",
+      "version": "1.0",
+      "condition": { "temperature_min_lte": 3, "horizon": "48h" },
+      "action": "Attendez les saints de glace pour planter vos haricots (11-13 mai)",
+      "priorité": "moyenne",
+      "especes_cibles": ["haricot"],
+      "mode": "exterieur",
+      "source_fr": "FR10"
+    },
+    {
+      "id": "taille-tomate-gourmands-001",
+      "version": "1.0",
+      "condition": { "generic": true },
+      "action": "Pincez les gourmands de vos tomates chaque semaine",
+      "priorité": "basse",
+      "especes_cibles": ["tomate"],
+      "mode": "tous",
+      "source_fr": "FR10"
+    },
+    {
+      "id": "semis-saison-laitue-radis-001",
+      "version": "1.0",
+      "condition": { "generic": true },
+      "action": "C'est le bon moment pour semer laitues et radis en godets",
+      "priorité": "basse",
+      "especes_cibles": ["laitue", "radis"],
+      "mode": "tous",
+      "source_fr": "FR10"
+    },
+    {
+      "id": "semis-carotte-printemps-001",
+      "version": "1.0",
+      "condition": { "generic": true },
+      "action": "Semez vos carottes en ligne, espacez les graines de 5 cm",
+      "priorité": "basse",
+      "especes_cibles": ["carotte"],
+      "mode": "tous",
+      "source_fr": "FR10"
+    },
+    {
+      "id": "desherbage-generique-001",
+      "version": "1.0",
+      "condition": { "generic": true },
+      "action": "Vérifiez les mauvaises herbes au pied de vos cultures",
+      "priorité": "basse",
+      "especes_cibles": ["*"],
+      "mode": "tous",
+      "source_fr": "FR10"
+    },
+    {
+      "id": "arrosage-pied-matin-001",
+      "version": "1.0",
+      "condition": { "temperature_max_gte": 20, "horizon": "24h" },
+      "action": "Arrosez au pied le matin — évitez de mouiller le feuillage",
+      "priorité": "basse",
+      "especes_cibles": ["*"],
+      "mode": "exterieur",
+      "source_fr": "FR10"
+    },
+    {
+      "id": "paillage-ete-001",
+      "version": "1.0",
+      "condition": { "temperature_max_gte": 25, "horizon": "48h" },
+      "action": "Paillez autour de vos cultures pour conserver l'humidité",
+      "priorité": "basse",
+      "especes_cibles": ["tomate", "courgette", "concombre", "poivron"],
+      "mode": "exterieur",
+      "source_fr": "FR10"
+    }
+  ]
+}

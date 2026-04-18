@@ -1,0 +1,230 @@
+/* compagnonnage.css — Potager Magique */
+/* Composant CompanionBadge : associations bénéfiques / déconseillées */
+/* Scopé Epic 5 — squelette Story 1.2 */
+
+/* ====================================================================
+   COMPANION BADGE — badge d'association entre espèces
+   États : beneficial (vert) / warned (orange)
+   Alerte automatique si espèce en conflit détectée dans le journal
+   ==================================================================== */
+
+/* ── CompanionBadge — badge cliquable (Story 5.2) ─────────────────── */
+.companion-badge {
+  display:      inline-flex;
+  align-items:  center;
+  gap:          6px;
+  padding:      8px 14px;
+  border-radius: 20px;
+  font-size:    0.85rem;
+  font-weight:  600;
+  min-height:   44px;   /* NFR11 — touch target ≥ 44px */
+  min-width:    44px;
+  cursor:       pointer;
+  border:       none;
+  background:   none;
+  font-family:  inherit;
+  transition:   opacity 0.15s;
+}
+
+/* Association bénéfique — vert */
+.companion-badge--beneficial {
+  background: rgba(92, 138, 45, 0.12);
+  color:      var(--color-secondary, #5a8a2d);
+  border:     1px solid rgba(92, 138, 45, 0.3);
+}
+
+/* Association déconseillée — orange */
+.companion-badge--warned {
+  background: rgba(224, 119, 0, 0.12);
+  color:      var(--color-priority-medium, #e07700);
+  border:     1px solid rgba(224, 119, 0, 0.3);
+}
+
+.companion-badge:hover,
+.companion-badge:focus-visible {
+  opacity:        0.85;
+  outline:        2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Badges non-cliquables (fallback VEG) */
+span.companion-badge {
+  cursor: default;
+}
+span.companion-badge:hover,
+span.companion-badge:focus-visible {
+  opacity: 1;
+  outline: none;
+}
+
+/* Conteneur badges dans la fiche */
+.companion-badges {
+  display:       flex;
+  flex-wrap:     wrap;
+  gap:           8px;
+  margin-bottom: 12px;
+}
+
+/* ====================================================================
+   BANNIÈRE CONFLITS JOURNAL (Story 5.3)
+   ==================================================================== */
+
+.pm-conflict-banner {
+  background:    rgba(224, 119, 0, 0.12);
+  border:        1px solid rgba(224, 119, 0, 0.4);
+  border-radius: 8px;
+  padding:       10px 14px;
+  font-size:     0.9rem;
+  color:         var(--color-priority-medium, #e07700);
+  font-weight:   600;
+  margin-bottom: 12px;
+}
+.pm-conflict-banner[hidden] { display: none; }
+
+/* Badge conflit compact dans culture card */
+.pm-conflict-badge {
+  font-size:  0.75rem;
+  padding:    4px 10px;
+  min-height: 28px;
+  margin-top: 6px;
+}
+
+/* ====================================================================
+   MATRICE COMPAGNONNAGE (Story 5.4)
+   ==================================================================== */
+
+/* Légende */
+.cm-legend {
+  display:     flex;
+  gap:         16px;
+  flex-wrap:   wrap;
+  margin-bottom: 12px;
+  font-size:   0.85rem;
+  font-weight: 600;
+}
+.cm-legend-item--beneficial { color: var(--color-secondary, #5a8a2d); }
+.cm-legend-item--warned     { color: var(--color-priority-medium, #e07700); }
+.cm-legend-item--neutral    { color: #aaa; }
+
+/* Conteneur scrollable */
+.pm-matrice-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+}
+
+/* Tableau */
+.cm-table {
+  border-collapse: collapse;
+  font-size:       0.65rem;
+  white-space:     nowrap;
+}
+
+/* En-tête colonnes */
+.cm-th-corner { width: 58px; min-width: 58px; }
+.cm-th {
+  padding:    4px 2px;
+  font-size:  0.6rem;
+  font-weight: 700;
+  text-align: center;
+  max-width:  36px;
+  overflow:   hidden;
+  color:      var(--color-text, #1a1a1a);
+  position:   sticky;
+  top:        0;
+  background: var(--color-surface, #f9f6f1);
+  z-index:    2;
+  cursor:     default;
+}
+
+/* En-tête lignes (sticky left) */
+.cm-th-row {
+  position:   sticky;
+  left:       0;
+  background: var(--color-surface, #f9f6f1);
+  z-index:    1;
+  padding:    2px 6px 2px 4px;
+  font-size:  0.6rem;
+  font-weight: 700;
+  text-align: left;
+  min-width:  58px;
+  max-width:  58px;
+  white-space: nowrap;
+  overflow:   hidden;
+  color:      var(--color-text, #1a1a1a);
+  border-right: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Cellules */
+.cm-cell {
+  width:     28px;
+  height:    28px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.65rem;
+  border:    1px solid rgba(0,0,0,0.05);
+}
+.cm-cell--self {
+  background: rgba(0,0,0,0.04);
+  color:      #ccc;
+  font-size:  0.6rem;
+}
+.cm-cell--beneficial {
+  background: rgba(92, 138, 45, 0.18);
+  color:      var(--color-secondary, #5a8a2d);
+  cursor:     pointer;
+  font-size:  0.8rem;
+}
+.cm-cell--warned {
+  background: rgba(224, 119, 0, 0.18);
+  color:      var(--color-priority-medium, #e07700);
+  cursor:     pointer;
+  font-size:  0.8rem;
+}
+.cm-cell--neutral { background: transparent; }
+.cm-cell--beneficial:hover,
+.cm-cell--warned:hover {
+  opacity: 0.75;
+}
+.cm-cell--beneficial:focus-visible,
+.cm-cell--warned:focus-visible {
+  outline:        2px solid currentColor;
+  outline-offset: -2px;
+}
+
+/* Tooltip */
+.cm-tooltip {
+  position:      fixed;
+  bottom:        80px;
+  left:          50%;
+  transform:     translateX(-50%);
+  background:    var(--color-text, #1a1a1a);
+  color:         white;
+  padding:       12px 18px;
+  border-radius: 10px;
+  font-size:     0.85rem;
+  line-height:   1.5;
+  text-align:    center;
+  max-width:     calc(100vw - 32px);
+  z-index:       100;
+  box-shadow:    0 4px 20px rgba(0,0,0,0.25);
+}
+.cm-tooltip[hidden] { display: none; }
+
+/* Message chargement */
+.cm-loading {
+  padding:    24px;
+  text-align: center;
+  color:      #888;
+  font-size:  0.9rem;
+}
+
+/* ====================================================================
+   REDUCED MOTION — accessibilité
+   ==================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .companion-badge {
+    transition: none;
+  }
+}

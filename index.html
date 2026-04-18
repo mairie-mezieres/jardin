@@ -81,9 +81,21 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
 .te{background:#d4eab8;color:#1a4a08}.tm{background:#ffe8b2;color:#7a4400}.td{background:#ffd4d4;color:#7a1010}
 
 /* ══ FILTER ══ */
-.filter-bar{display:flex;gap:5px;margin-bottom:13px;flex-wrap:wrap}
+.filter-bar{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;align-items:center}
 .filter-btn{background:white;border:1.5px solid #ddd;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;padding:5px 11px;border-radius:20px;cursor:pointer;transition:all .13s}
 .filter-btn.on{background:var(--moss);border-color:var(--moss);color:white}
+.filter-toggle{background:none;border:1.5px solid var(--moss);color:var(--moss);font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:700;padding:5px 11px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:5px;margin-left:auto}
+.filter-toggle.active{background:var(--moss);color:white}
+.filter-badge{background:#cc0000;color:white;border-radius:10px;font-size:.65rem;padding:1px 5px;font-weight:800}
+.filter-panel{background:var(--color-surface,#f9f6f1);border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:12px;margin-bottom:10px}
+.filter-section{margin-bottom:10px}
+.filter-section:last-of-type{margin-bottom:0}
+.filter-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--soil,#8b5e3c);margin-bottom:5px}
+.filter-chips{display:flex;flex-wrap:wrap;gap:5px}
+.filter-chip{background:white;border:1.5px solid #ddd;color:var(--muted,#888);font-family:'DM Sans',sans-serif;font-size:.73rem;font-weight:600;padding:4px 10px;border-radius:16px;cursor:pointer;transition:all .13s}
+.filter-chip.on{background:var(--moss);border-color:var(--moss);color:white}
+.filter-reset{background:none;border:none;color:var(--muted);font-size:.75rem;font-weight:600;cursor:pointer;margin-top:8px;padding:4px 0;text-decoration:underline}
+.veg-grid-empty{padding:24px;text-align:center;color:#888;font-size:.9rem;line-height:1.6}
 
 /* ══ MODAL ══ */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,8,2,.65);z-index:200;align-items:flex-end;justify-content:center}
@@ -112,6 +124,17 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
 .mb.pl{background:var(--c-pl-bg);color:var(--c-pl)}.mb.ha{background:var(--c-ha-bg);color:var(--c-ha)}.mb.pk{background:var(--c-pk-bg);color:var(--c-pk)}
 .btn-add{background:var(--moss);color:white;border:none;padding:10px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.86rem;font-weight:600;cursor:pointer;width:100%;margin-top:8px}
 .btn-add:hover{background:var(--leaf)}
+.btn-secondary{background:none;color:var(--moss);border:1.5px solid var(--moss);padding:8px 14px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;margin-top:6px;margin-bottom:4px}
+.btn-secondary:hover{background:rgba(45,106,45,0.07)}
+.fiche-pousse{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.fiche-pousse__img{width:72px;height:72px;object-fit:cover;border-radius:8px;background:#f0f0f0}
+.fiche-pousse__label{font-size:.8rem;color:#666;font-weight:500}
+.mb.now{box-shadow:0 0 0 2px var(--moss);font-weight:800}
+.fiche-reco{background:rgba(45,106,45,0.07);border-radius:8px;padding:8px 12px;font-size:.82rem;margin-bottom:6px;line-height:1.4}
+.fiche-reco__prio{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.fiche-reco__prio--haute{color:var(--color-priority-high,#cc0000)}
+.fiche-reco__prio--moyenne{color:var(--color-priority-medium,#e07700)}
+.fiche-reco__prio--basse{color:var(--color-secondary,#5a8a2d)}
 
 /* ══ SUIVI ══ */
 .aform{background:white;border-radius:var(--rad);padding:14px;box-shadow:0 1px 6px var(--shade);margin-bottom:16px}
@@ -180,21 +203,142 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
 </style>
+<!-- Potager Magique CSS -->
+<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="alertes.css">
+<link rel="stylesheet" href="pousses.css">
+<link rel="stylesheet" href="compagnonnage.css">
+<script type="module" src="meteo.js"></script>
+<script type="module" src="dashboard.js"></script>
+<script type="module" src="cultures.js"></script>
+<script type="module" src="cultures-ui.js"></script>
+<script type="module" src="parametres-ui.js"></script>
+<script type="module" src="alertes.js"></script>
+<script type="module" src="alertes-ui.js"></script>
+<script type="module" src="expert.js"></script>
+<script type="module" src="dashboard-ui.js"></script>
+<script defer src="pousses.js"></script>
+<script defer src="pousses-ui.js"></script>
+<script defer src="compagnonnage.js"></script>
+<script defer src="compagnonnage-ui.js"></script>
 </head>
 <body>
 
-<nav>
+<nav aria-label="Navigation principale">
   <div class="nav-title">🌱 Jardin</div>
-  <button class="nav-btn active" onclick="showTab('tableau',this)">Tableau</button>
+  <button class="nav-btn active" onclick="showTab('aujourd-hui',this)">Aujourd'hui</button>
+  <button class="nav-btn" onclick="showTab('journal',this)">Journal</button>
+  <button class="nav-btn" onclick="showTab('parametres',this)">Paramètres</button>
+  <button class="nav-btn" onclick="showTab('pousses',this)">Pousses</button>
+  <button class="nav-btn" onclick="showTab('tableau',this)">Tableau</button>
   <button class="nav-btn" onclick="showTab('fiches',this)">Légumes</button>
   <button class="nav-btn" onclick="showTab('calendrier',this)">Calendrier</button>
   <button class="nav-btn" onclick="showTab('suivi',this)">Mon suivi</button>
   <button class="nav-btn" onclick="showTab('recoltes',this)">Récoltes</button>
   <button class="nav-btn" onclick="showTab('rotation',this)">Rotation</button>
   <button class="nav-btn" onclick="showTab('nuisibles',this)">Nuisibles</button>
+  <button class="nav-btn" onclick="showTab('compagnonnage',this)">Compagnonnage</button>
 </nav>
 
-<section id="tab-tableau" class="active">
+<main id="pm-main-content">
+<section id="tab-parametres">
+  <div class="pm-settings-section">
+    <h2 class="pm-settings__title">Mode de culture</h2>
+    <p class="pm-settings__desc">Adapte les recommandations à ton environnement.</p>
+    <div class="pm-mode-toggle" role="radiogroup" aria-label="Mode de culture">
+      <button type="button" class="pm-mode-btn touch-target" role="radio" data-mode="exterieur" aria-checked="false">☀️ Extérieur</button>
+      <button type="button" class="pm-mode-btn touch-target" role="radio" data-mode="serre" aria-checked="false">🌱 Serre</button>
+    </div>
+  </div>
+  <div class="pm-settings-section">
+    <h2 class="pm-settings__title">Localisation météo</h2>
+    <p class="pm-settings__desc">Coordonnées utilisées pour la météo Open-Meteo.</p>
+    <form id="pm-coord-form" class="pm-coord-form">
+      <label for="pm-coord-lat">Latitude</label>
+      <input type="number" id="pm-coord-lat" name="lat" step="0.0001" min="-90" max="90" required>
+      <label for="pm-coord-lon">Longitude</label>
+      <input type="number" id="pm-coord-lon" name="lon" step="0.0001" min="-180" max="180" required>
+      <button type="submit" id="pm-coord-save" class="pm-coord-save touch-target">Enregistrer</button>
+    </form>
+  </div>
+</section>
+<section id="tab-journal">
+  <div id="pm-conflict-banner" class="pm-conflict-banner" hidden aria-live="polite"></div>
+  <div id="pm-journal-list" class="pm-journal__list" aria-live="polite" aria-relevant="additions removals"></div>
+  <div id="pm-journal-archives" class="pm-journal__archives"></div>
+  <!-- Action Sheet -->
+  <div class="pm-as-overlay" id="pm-as-overlay" role="dialog" aria-modal="true" aria-label="Actions culture">
+    <div class="pm-as-sheet" id="pm-as-sheet">
+      <button class="pm-as-btn touch-target" id="pm-as-repiquee">🌱 Marquer comme repiquée</button>
+      <button class="pm-as-btn touch-target" id="pm-as-floraison">🌸 En floraison</button>
+      <button class="pm-as-btn touch-target" id="pm-as-recoltee">🧺 Récoltée</button>
+      <button class="pm-as-btn pm-as-btn--danger touch-target" id="pm-as-supprimer">🗑️ Supprimer</button>
+      <button class="pm-as-cancel touch-target" id="pm-as-cancel">Annuler</button>
+    </div>
+  </div>
+  <button class="fab-add touch-target" id="pm-fab-add" aria-label="Ajouter une culture">＋</button>
+  <div class="bs-overlay" id="pm-bs-overlay" role="dialog" aria-modal="true" aria-label="Ajouter une culture">
+    <div class="bs-sheet">
+      <div class="bs-header">
+        <h2>Ajouter une culture</h2>
+        <button class="bs-close touch-target" id="pm-bs-close" aria-label="Fermer">✕</button>
+      </div>
+      <form id="pm-bs-form" class="bs-form">
+        <label for="pm-bs-espece">Espèce</label>
+        <select id="pm-bs-espece" name="espece" required>
+          <option value="" disabled selected>— Choisir une espèce —</option>
+        </select>
+        <label for="pm-bs-date">Date de semis</label>
+        <input type="date" id="pm-bs-date" name="dateSemis" required>
+        <label>Localisation</label>
+        <div class="bs-mode-toggle" role="radiogroup" aria-label="Localisation">
+          <button type="button" class="bs-mode-btn touch-target" data-mode="exterieur">☀️ Extérieur</button>
+          <button type="button" class="bs-mode-btn touch-target" data-mode="serre">🌱 Serre</button>
+        </div>
+        <button type="submit" class="bs-submit touch-target">Enregistrer</button>
+        <button type="button" class="bs-cancel touch-target" id="pm-bs-cancel">Annuler</button>
+      </form>
+    </div>
+  </div>
+</section>
+<section id="tab-pousses">
+  <div id="pm-pousses-container" class="pm-pousses-container">
+    <!-- Rendu dynamique par pousses-ui.js après pm:pousses-ready -->
+  </div>
+</section>
+<section id="tab-aujourd-hui" class="active">
+  <div class="pm-header">
+    <div class="pm-header__top">
+      <div class="pm-header__greeting">
+        <h1>Potager Magique</h1>
+        <p class="pm-header__date" id="pm-today-date"></p>
+      </div>
+      <div id="pm-weather-summary" class="weather-summary" aria-label="Météo du jour"></div>
+    </div>
+    <div id="pm-freshness" class="freshness-indicator" role="status" aria-live="polite"></div>
+    <div class="pm-dashboard-modetoggle" role="radiogroup" aria-label="Mode de culture">
+      <button type="button" class="pm-mode-btn touch-target" role="radio"
+              data-mode="exterieur" aria-checked="false">☀️ Extérieur</button>
+      <button type="button" class="pm-mode-btn touch-target" role="radio"
+              data-mode="serre" aria-checked="false">🌱 Serre</button>
+    </div>
+  </div>
+  <div id="pm-dashboard-body" class="pm-dashboard__body">
+    <div id="pm-alert-container" aria-live="assertive" aria-atomic="true" aria-hidden="true" style="display:none"></div>
+    <div id="pm-recos-offline" style="display:none" class="pm-recos-offline"
+         role="status" aria-live="polite">📡 Recommandations hors connexion</div>
+    <div id="pm-recos-container" aria-live="polite" aria-relevant="additions removals"></div>
+    <div id="pm-recos-empty" style="display:none" class="pm-recos-empty">
+      <p>Ajoute tes premières cultures dans le journal pour recevoir des recommandations personnalisées</p>
+      <button type="button" class="pm-recos-empty__cta touch-target"
+              onclick="showTab('journal', document.querySelector('[onclick*=journal]'))">
+        → Journal
+      </button>
+    </div>
+  </div>
+</section>
+
+<section id="tab-tableau">
   <div class="tstrip">
     <h2 id="tg">Bienvenue au jardin 👋</h2>
     <p id="td"></p>
@@ -232,12 +376,43 @@ th.ncol{background:#edf6e0!important;color:var(--moss)!important}
   <p class="section-sub">Touche un légume pour sa fiche complète — 53 variétés.</p>
   <div class="filter-bar">
     <button class="filter-btn on" onclick="setF('all',this)">Tous</button>
-    <button class="filter-btn" onclick="setF('sun',this)">☀️ Soleil</button>
-    <button class="filter-btn" onclick="setF('half',this)">🌤️ Mi-ombre</button>
-    <button class="filter-btn" onclick="setF('shade',this)">🌥️ Ombre</button>
-    <button class="filter-btn" onclick="setF('easy',this)">✅ Facile</button>
     <button class="filter-btn" onclick="setF('sow',this)">Semis ce mois</button>
     <button class="filter-btn" onclick="setF('harvest',this)">Récolte ce mois</button>
+    <button class="filter-toggle" id="filter-toggle-btn" onclick="toggleFilterPanel()" aria-expanded="false" aria-controls="filter-panel">
+      🔍 Filtres <span class="filter-badge" id="filter-badge" hidden>0</span>
+    </button>
+  </div>
+  <div class="filter-panel" id="filter-panel" hidden>
+    <div class="filter-section">
+      <div class="filter-section-label">Lumière</div>
+      <div class="filter-chips">
+        <button class="filter-chip" data-key="lumiere" data-val="sun" onclick="setChipFilter(this)">☀️ Soleil</button>
+        <button class="filter-chip" data-key="lumiere" data-val="half" onclick="setChipFilter(this)">🌤️ Mi-ombre</button>
+        <button class="filter-chip" data-key="lumiere" data-val="shade" onclick="setChipFilter(this)">🌥️ Ombre</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-section-label">Difficulté</div>
+      <div class="filter-chips">
+        <button class="filter-chip" data-key="difficulte" data-val="easy" onclick="setChipFilter(this)">✅ Facile</button>
+        <button class="filter-chip" data-key="difficulte" data-val="medium" onclick="setChipFilter(this)">⚠️ Moyen</button>
+        <button class="filter-chip" data-key="difficulte" data-val="hard" onclick="setChipFilter(this)">🔴 Expert</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-section-label">Saison d'action</div>
+      <div class="filter-chips">
+        <button class="filter-chip" data-key="saison" data-val="printemps" onclick="setChipFilter(this)">🌸 Printemps</button>
+        <button class="filter-chip" data-key="saison" data-val="ete" onclick="setChipFilter(this)">☀️ Été</button>
+        <button class="filter-chip" data-key="saison" data-val="automne" onclick="setChipFilter(this)">🍂 Automne</button>
+        <button class="filter-chip" data-key="saison" data-val="hiver" onclick="setChipFilter(this)">❄️ Hiver</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-section-label">Famille botanique</div>
+      <div class="filter-chips" id="famille-chips"></div>
+    </div>
+    <button class="filter-reset" onclick="resetFilters()">↺ Réinitialiser tous les filtres</button>
   </div>
   <div class="veg-grid" id="veg-grid"></div>
 </section>
@@ -434,6 +609,10 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderSowings();
   populateSel();
   document.getElementById('sw-d').value=new Date().toISOString().split('T')[0];
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+      .catch(err => console.warn('SW registration failed:', err));
+  }
 });
 
 // ═══════════════════════════════════════════════════
@@ -529,26 +708,102 @@ function buildCal(tid,mini){
 // ═══════════════════════════════════════════════════
 // VEG GRID
 // ═══════════════════════════════════════════════════
-function setF(f,btn){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderGrid(f);
+// Story 6.3 — Système de filtres multi-critères
+const _fs = { quick: 'all', lumiere: null, difficulte: null, saison: null, famille: null };
+const _saisonMois = { printemps:[3,4,5], ete:[6,7,8], automne:[9,10,11], hiver:[12,1,2] };
+const _famLabels = {
+  solanees:'Solanées', cucurbitacees:'Cucurbitacées', cruciferes:'Crucifères/Brassicacées',
+  fabaceae:'Légumineuses', apiaceae:'Apiacées', alliaceae:'Alliacées',
+  asteraceae:'Astéracées', chenopodiaceae:'Chénopodiacées', lamiaceae:'Lamiacées'
+};
+
+function _initFamilleChips() {
+  const familles = [...new Set((VEG||[]).map(v=>v.fam).filter(Boolean))].sort();
+  const el = document.getElementById('famille-chips');
+  if (!el) return;
+  el.innerHTML = familles.map(f =>
+    `<button class="filter-chip" data-key="famille" data-val="${f}" onclick="setChipFilter(this)">${_famLabels[f]||f}</button>`
+  ).join('');
 }
 
-function renderGrid(f){
-  const m=new Date().getMonth()+1;
-  const list=VEG.filter(v=>{
-    if(f==='sun')return v.li==='sun';
-    if(f==='half')return v.li==='half';
-    if(f==='shade')return v.li==='shade';
-    if(f==='easy')return v.di==='easy';
-    if(f==='sow')return(v.si&&v.si.includes(m))||(v.so&&v.so.includes(m));
-    if(f==='harvest')return(v.ha&&v.ha.includes(m))||(v.pk&&v.pk.includes(m));
+function _countActiveChipFilters() {
+  return ['lumiere','difficulte','saison','famille'].filter(k => _fs[k] !== null).length;
+}
+
+function _updateFilterBadge() {
+  const n = _countActiveChipFilters();
+  const badge = document.getElementById('filter-badge');
+  if (badge) { badge.textContent = n; badge.hidden = n === 0; }
+  const toggle = document.getElementById('filter-toggle-btn');
+  if (toggle) toggle.classList.toggle('active', n > 0);
+}
+
+function toggleFilterPanel() {
+  const panel = document.getElementById('filter-panel');
+  if (!panel) return;
+  const open = !panel.hidden;
+  panel.hidden = open;
+  const btn = document.getElementById('filter-toggle-btn');
+  if (btn) btn.setAttribute('aria-expanded', String(!open));
+}
+
+function setChipFilter(btn) {
+  const key = btn.dataset.key;
+  const val = btn.dataset.val;
+  const isOn = btn.classList.contains('on');
+  // Désactiver les autres chips du même groupe
+  btn.closest('.filter-chips')?.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('on'));
+  if (!isOn) { btn.classList.add('on'); _fs[key] = val; }
+  else _fs[key] = null;
+  _updateFilterBadge();
+  renderGrid();
+}
+
+function setF(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  _fs.quick = f;
+  renderGrid();
+}
+
+function resetFilters() {
+  _fs.quick = 'all';
+  _fs.lumiere = null; _fs.difficulte = null; _fs.saison = null; _fs.famille = null;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+  document.querySelector('.filter-btn[onclick*="all"]')?.classList.add('on');
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('on'));
+  _updateFilterBadge();
+  renderGrid();
+}
+
+function renderGrid() {
+  const m = new Date().getMonth() + 1;
+  const list = VEG.filter(v => {
+    // Filtre rapide (quick)
+    if (_fs.quick === 'sow' && !((v.si&&v.si.includes(m))||(v.so&&v.so.includes(m)))) return false;
+    if (_fs.quick === 'harvest' && !((v.ha&&v.ha.includes(m))||(v.pk&&v.pk.includes(m)))) return false;
+    // Filtres panel
+    if (_fs.lumiere && v.li !== _fs.lumiere) return false;
+    if (_fs.difficulte && v.di !== _fs.difficulte) return false;
+    if (_fs.famille && v.fam !== _fs.famille) return false;
+    if (_fs.saison) {
+      const mois = _saisonMois[_fs.saison] || [];
+      const hasAction = mois.some(ms =>
+        (v.si&&v.si.includes(ms))||(v.so&&v.so.includes(ms))||
+        (v.pl&&v.pl.includes(ms))||(v.ha&&v.ha.includes(ms)));
+      if (!hasAction) return false;
+    }
     return true;
   });
   const lt={sun:'<span class="tag ts">☀️</span>',half:'<span class="tag th">🌤️</span>',shade:'<span class="tag to">🌥️</span>'};
   const dt={easy:'<span class="tag te">Facile</span>',medium:'<span class="tag tm">Moyen</span>',hard:'<span class="tag td">Difficile</span>'};
-  document.getElementById('veg-grid').innerHTML=list.map(v=>`
+  const grid = document.getElementById('veg-grid');
+  if (!grid) return;
+  if (!list.length) {
+    grid.innerHTML = '<div class="veg-grid-empty">🌱 Aucun légume pour ces critères —<br>essaie une autre combinaison !</div>';
+    return;
+  }
+  grid.innerHTML = list.map(v => `
     <div class="veg-card" onclick="openM('${v.id}')">
       <span class="veg-emoji">${v.e}</span>
       <div class="veg-name">${v.n}</div>
@@ -559,6 +814,18 @@ function renderGrid(f){
 // ═══════════════════════════════════════════════════
 // MODAL
 // ═══════════════════════════════════════════════════
+// P1+P2 — Story 5.2 : helper CompanionBadge hoissé hors openM, escaping défensif
+function _escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function _cbHtml(item,type){
+  const nom=_escH(item.nom||'');
+  const lbl=nom+(type==='beneficial'?' \u2014 bonne association':' \u2014 \u00e9viter \u00e0 proximit\u00e9');
+  if(item.id){
+    return '<button class="companion-badge companion-badge--'+type+' touch-target"'
+          +' data-open-espece="'+_escH(item.id)+'" aria-label="'+lbl+'">'+nom+'</button>';
+  }
+  // P4 — role="img" pour que aria-label soit annoncé par les AT sur les spans non-interactifs
+  return '<span class="companion-badge companion-badge--'+type+'" role="img" aria-label="'+lbl+'">'+nom+'</span>';
+}
 function openM(id){
   const v=VEG.find(x=>x.id===id);
   if(!v)return;
@@ -567,14 +834,49 @@ function openM(id){
   const dm={easy:'✅ Facile',medium:'⚠️ Moyen',hard:'🔴 Difficile'};
   const pm={'sn':'Serre Nord ☀️','sm':'Serre Centre 🌤️','ss':'Serre Sud 🌥️','pa':'Plein air','pt':'Potager'};
   let badges='<div class="mbadges">';
+  const _nowM=new Date().getMonth()+1;
   MN.forEach((mn,i)=>{
     const m=i+1;
     const cls=v.pk&&v.pk.includes(m)?'pk':v.ha&&v.ha.includes(m)?'ha':v.pl&&v.pl.includes(m)?'pl':v.si&&v.si.includes(m)?'si':v.so&&v.so.includes(m)?'so':'';
-    badges+=`<div class="mb ${cls}">${mn.slice(0,1)}</div>`;
+    const nowCls=m===_nowM?' now':'';
+    badges+=`<div class="mb ${cls}${nowCls}">${mn.slice(0,1)}</div>`;
   });
   badges+='</div>';
-  const co=(v.co||[]).map(c=>`<span class="ct g">✅ ${c}</span>`).join('');
-  const en=(v.en||[]).map(e=>`<span class="ct b">❌ ${e}</span>`).join('');
+  // Story 5.2 — CompanionBadge depuis CompagnonnageModule (fallback VEG si module non prêt)
+  const assoc = window.CompagnonnageModule?.getAssociations(v.id)
+              || { benefiques: [], deconseilles: [] };
+  const benList = assoc.benefiques.length > 0
+    ? assoc.benefiques
+    : (v.co||[]).map(nom => ({ id: null, nom }));
+  const decList = assoc.deconseilles.length > 0
+    ? assoc.deconseilles
+    : (v.en||[]).map(nom => ({ id: null, nom }));
+  const coBadges = benList.map(x => _cbHtml(x, 'beneficial')).join('');
+  const enBadges = decList.map(x => _cbHtml(x, 'warned')).join('');
+  // Story 6.1 — Section "Identifier les pousses"
+  const _germPhoto = window.PoussesModule?.getPhotos(v.id)?.germination || '';
+  const _pousseSection = _germPhoto
+    ? `<div class="mstitle">🌱 Identifier les pousses</div>
+       <div class="fiche-pousse">
+         <img class="fiche-pousse__img" src="${_escH(_germPhoto)}" alt="Germination ${_escH(v.n)}" loading="lazy">
+         <span class="fiche-pousse__label">Germination</span>
+       </div>
+       <button class="btn-secondary" onclick="quickShowPousses('${_escH(v.id)}')">Voir tous les stades →</button>`
+    : '';
+  // Story 6.2 — Recommandations du moment pour cette espèce
+  const _allRecos = window.ExpertModule?.getRecommandations() || [];
+  const _especeRecos = _allRecos.filter(r => {
+    const cibles = r.especes_cibles || [];
+    return cibles.includes(v.id) || cibles.includes('*');
+  }).slice(0, 3);
+  const _prioLabel = {'haute':'🔴 Maintenant','moyenne':'🟡 Aujourd\'hui','basse':'🟢 Cette semaine'};
+  const _recosHtml = _especeRecos.length
+    ? '<div class="mstitle">📋 Recommandations du moment</div>'
+      + _especeRecos.map(r=>`<div class="fiche-reco">
+           <div class="fiche-reco__prio fiche-reco__prio--${_escH(r['priorité']||'basse')}">${_prioLabel[r['priorité']]||''}</div>
+           ${_escH(r.action||'')}
+         </div>`).join('')
+    : '';
   document.getElementById('mc').innerHTML=`
     <div class="mhead"><span class="micon">${v.e}</span>
       <div><div class="mname">${v.n}</div><div class="mlatin">${v.lat}</div></div>
@@ -600,11 +902,18 @@ function openM(id){
       <div class="cl-item"><div class="cl-dot d-ha"></div>Récolte</div>
       <div class="cl-item"><div class="cl-dot d-pk"></div>Récolte optimale</div>
     </div>
-    ${co?`<div class="mstitle">Bonnes associations</div><div class="ctags">${co}</div>`:''}
-    ${en?`<div class="mstitle">Mauvaises associations</div><div class="ctags">${en}</div>`:''}
+    ${coBadges?`<div class="mstitle">🌿 Bons voisins</div><div class="companion-badges">${coBadges}</div>`:''}
+    ${enBadges?`<div class="mstitle">⚠️ Éviter à proximité</div><div class="companion-badges">${enBadges}</div>`:''}
+    ${_pousseSection}
+    ${_recosHtml}
     <button class="btn-add" onclick="quickAdd('${v.id}')">➕ Enregistrer un semis / plantation</button>`;
   document.getElementById('mov').classList.add('open');
 }
+// Story 5.2 — P3 : délégation scopée à #mov (pas document entier) pour navigation croisée (AC3)
+document.getElementById('mov').addEventListener('click', function(e) {
+  const btn = e.target.closest('[data-open-espece]');
+  if (btn) { e.stopPropagation(); openM(btn.dataset.openEspece); }
+});
 function closeMov(e){if(e.target===document.getElementById('mov'))document.getElementById('mov').classList.remove('open');}
 function closeMbtn(){document.getElementById('mov').classList.remove('open');}
 function quickAdd(id){
@@ -614,6 +923,12 @@ function quickAdd(id){
   document.getElementById('tab-suivi').classList.add('active');
   document.querySelectorAll('.nav-btn')[3].classList.add('active');
   document.getElementById('sw-v').value=id;
+}
+function quickShowPousses(id){
+  closeMbtn();
+  const pBtn=document.querySelector('.nav-btn[onclick*="\'pousses\'"]');
+  showTab('pousses',pBtn);
+  if(window.PoussesUI&&window.PoussesUI.showEspece)window.PoussesUI.showEspece(id);
 }
 
 // ═══════════════════════════════════════════════════
@@ -719,8 +1034,21 @@ function buildPests(){
     </div>`).join('');
 }
 
-// Init filter
-renderGrid('all');
+// Init filter + famille chips
+_initFamilleChips();
+renderGrid();
 </script>
+<section id="tab-compagnonnage">
+  <h1 class="section-title">Compagnonnage</h1>
+  <p class="section-sub">Associations bénéfiques et déconseillées entre les 34 espèces du catalogue.</p>
+  <div class="cm-legend" aria-label="Légende de la matrice">
+    <span class="cm-legend-item cm-legend-item--beneficial">● Bénéfique</span>
+    <span class="cm-legend-item cm-legend-item--warned">● Déconseillé</span>
+    <span class="cm-legend-item cm-legend-item--neutral">○ Neutre</span>
+  </div>
+  <div class="pm-matrice-wrap" id="pm-matrice-wrap" role="region" aria-label="Matrice de compagnonnage"></div>
+  <div class="cm-tooltip" id="cm-tooltip" hidden aria-live="polite"></div>
+</section>
+</main>
 </body>
 </html>

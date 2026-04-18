@@ -1,0 +1,314 @@
+/* pousses.css — Potager Magique */
+/* Banque de photos de pousses — Navigation + PhotoCard */
+
+/* ====================================================================
+   CONTENEUR PRINCIPAL
+   ==================================================================== */
+.pm-pousses-container {
+  padding: 16px;
+}
+
+/* ====================================================================
+   GRILLE DES FAMILLES
+   ==================================================================== */
+.pm-famille-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .pm-famille-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.pm-famille-card {
+  background:    var(--cream, #f9f6f0);
+  border:        1px solid var(--leaf, #5a8a4a);
+  border-radius: 12px;
+  padding:       16px;
+  text-align:    left;
+  cursor:        pointer;
+  width:         100%;
+  transition:    background 0.15s, box-shadow 0.15s;
+}
+
+.pm-famille-card:hover,
+.pm-famille-card:focus-visible {
+  background:  var(--paper, #eef5e8);
+  box-shadow:  0 2px 8px rgba(90,138,74,0.15);
+  outline:     2px solid var(--leaf, #5a8a4a);
+  outline-offset: 2px;
+}
+
+.pm-famille-card__label {
+  display:     block;
+  font-weight: 600;
+  color:       var(--moss, #4a7a3a);
+  font-size:   1rem;
+}
+
+.pm-famille-card__count {
+  display:    block;
+  font-size:  0.8rem;
+  color:      var(--muted, #888);
+  margin-top: 4px;
+}
+
+/* ====================================================================
+   BARRE DE NAVIGATION (bouton retour + titre)
+   ==================================================================== */
+.pm-pousses-nav {
+  display:        flex;
+  align-items:    center;
+  gap:            12px;
+  margin-bottom:  16px;
+  padding-bottom: 8px;
+  border-bottom:  1px solid #eee;
+}
+
+.pm-back-btn {
+  background:  none;
+  border:      none;
+  color:       var(--leaf, #5a8a4a);
+  font-size:   0.9rem;
+  cursor:      pointer;
+  padding:     6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.pm-back-btn:hover,
+.pm-back-btn:focus-visible {
+  background: var(--paper, #eef5e8);
+  outline:    2px solid var(--leaf, #5a8a4a);
+  outline-offset: 2px;
+}
+
+.pm-pousses-title {
+  font-size:   1.1rem;
+  font-weight: 600;
+  margin:      0;
+  color:       var(--text, #333);
+}
+
+/* ====================================================================
+   LISTE DES ESPÈCES
+   ==================================================================== */
+.pm-espece-list {
+  list-style: none;
+  padding:    0;
+  margin:     0;
+}
+
+.pm-espece-item button {
+  width:       100%;
+  text-align:  left;
+  padding:     14px 4px;
+  border:      none;
+  border-bottom: 1px solid #eee;
+  background:  none;
+  cursor:      pointer;
+  font-size:   1rem;
+  color:       var(--text, #333);
+}
+
+.pm-espece-item button:hover,
+.pm-espece-item button:focus-visible {
+  color:   var(--moss, #4a7a3a);
+  background: var(--paper, #eef5e8);
+  outline: 2px solid var(--leaf, #5a8a4a);
+  outline-offset: -2px;
+}
+
+.pm-pousses-empty {
+  color:      var(--muted, #888);
+  text-align: center;
+  padding:    32px 16px;
+}
+
+/* ====================================================================
+   PHOTOCARD — carte de référence photo par stade
+   États : loading / loaded / error
+   ==================================================================== */
+.pm-detail-photos {
+  display:   flex;
+  gap:       12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.photo-card {
+  background:    #ffffff;
+  border-radius: 16px;
+  overflow:      hidden;
+  box-shadow:    0 1px 6px rgba(0, 0, 0, 0.08);
+  flex:          0 0 140px;
+  min-width:     140px;
+}
+
+.photo-card__image {
+  width:        100%;
+  aspect-ratio: 4 / 3;
+  object-fit:   cover;
+  display:      block;
+}
+
+.photo-card__image--hidden {
+  display: none;
+}
+
+.photo-card__label {
+  padding:     8px 12px 4px;
+  font-size:   0.8rem;
+  font-weight: 600;
+  color:       var(--text, #333);
+  margin:      0;
+}
+
+/* État chargement — squelette animé */
+.photo-card--loading .photo-card__image {
+  background:      linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation:       skeleton-shimmer 1.4s infinite;
+  min-height:      105px; /* maintient la hauteur pendant le loading */
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* État erreur — placeholder texte */
+.photo-card__error-msg {
+  display:     none;
+  padding:     8px 12px 12px;
+  font-size:   0.75rem;
+  color:       var(--muted, #888);
+  font-style:  italic;
+  margin:      0;
+}
+
+.photo-card--error .photo-card__error-msg {
+  display:    block;
+  padding-top: 8px;
+}
+
+.photo-card--error .photo-card__image {
+  min-height: 80px;
+  background: #f5f5f5;
+}
+
+/* ====================================================================
+   COMPARATIF POUSSES vs MAUVAISES HERBES (Story 4.4)
+   ==================================================================== */
+
+/* ── Bouton comparer ────────────────────────────────────────────────── */
+.pm-compare-btn {
+  display:       block;
+  margin-top:    16px;
+  background:    none;
+  border:        1px solid var(--leaf, #5a8a4a);
+  border-radius: 8px;
+  padding:       8px 16px;
+  color:         var(--leaf, #5a8a4a);
+  font-size:     0.9rem;
+  cursor:        pointer;
+  width:         100%;
+  text-align:    center;
+  transition:    background 0.15s;
+}
+
+.pm-compare-btn:hover,
+.pm-compare-btn:focus-visible {
+  background:     var(--paper, #eef5e8);
+  outline:        2px solid var(--leaf, #5a8a4a);
+  outline-offset: 2px;
+}
+
+/* ── Panneau comparatif ─────────────────────────────────────────────── */
+.pm-compare-panel {
+  margin-top:    16px;
+  border:        1px solid #eee;
+  border-radius: 12px;
+  padding:       16px;
+  background:    var(--cream, #f9f6f0);
+}
+
+.pm-compare-panel[hidden] {
+  display: none;
+}
+
+.pm-compare-header {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  margin-bottom:   12px;
+}
+
+.pm-compare-title {
+  margin:      0;
+  font-size:   1rem;
+  font-weight: 600;
+  color:       var(--text, #333);
+}
+
+.pm-compare-close {
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  font-size:   1.2rem;
+  color:       var(--muted, #888);
+  padding:     4px 8px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.pm-compare-close:hover,
+.pm-compare-close:focus-visible {
+  background:     #eee;
+  outline:        2px solid var(--leaf, #5a8a4a);
+  outline-offset: 2px;
+}
+
+/* ── Grille comparatif ──────────────────────────────────────────────── */
+.pm-compare-grid {
+  display:    flex;
+  gap:        12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.pm-compare-card {
+  flex:      0 0 130px;
+  min-width: 130px;
+}
+
+/* ── Légendes ───────────────────────────────────────────────────────── */
+.pm-compare-legend {
+  font-size:  0.75rem;
+  text-align: center;
+  margin:     6px 0 0;
+  padding:    0 4px;
+  line-height: 1.3;
+}
+
+.pm-compare-legend--espece {
+  color:       var(--moss, #4a7a3a);
+  font-weight: 600;
+}
+
+.pm-compare-legend--herbe {
+  color: #c0392b;
+}
+
+/* ====================================================================
+   REDUCED MOTION — accessibilité
+   ==================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .photo-card--loading .photo-card__image {
+    animation:  none;
+    background: #e8e8e8;
+  }
+}

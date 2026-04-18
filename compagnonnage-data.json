@@ -1,0 +1,530 @@
+{
+  "version": 1,
+  "updated": "2026-04-17",
+  "description": "Matrice de compagnonnage — 34 espèces du catalogue Potager Magique",
+  "especes": [
+    {
+      "id": "tomate",
+      "nom": "Tomate",
+      "benefiques": [
+        "ail",
+        "basilic",
+        "carotte",
+        "ciboulette",
+        "oignon",
+        "persil"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "pomme-de-terre"
+      ]
+    },
+    {
+      "id": "poivron",
+      "nom": "Poivron",
+      "benefiques": [
+        "basilic",
+        "carotte",
+        "oignon"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "aubergine",
+      "nom": "Aubergine",
+      "benefiques": [
+        "basilic",
+        "haricot",
+        "persil"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "concombre",
+      "nom": "Concombre",
+      "benefiques": [
+        "haricot",
+        "laitue",
+        "pois",
+        "radis"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "pomme-de-terre"
+      ]
+    },
+    {
+      "id": "courgette",
+      "nom": "Courgette",
+      "benefiques": [
+        "haricot",
+        "mais",
+        "radis"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "pomme-de-terre"
+      ]
+    },
+    {
+      "id": "courge",
+      "nom": "Courge",
+      "benefiques": [
+        "haricot",
+        "mais"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "pomme-de-terre"
+      ]
+    },
+    {
+      "id": "potiron",
+      "nom": "Potiron",
+      "benefiques": [
+        "haricot",
+        "mais"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "pomme-de-terre"
+      ]
+    },
+    {
+      "id": "mais",
+      "nom": "Maïs",
+      "benefiques": [
+        "courge",
+        "courgette",
+        "haricot",
+        "melon",
+        "pomme-de-terre",
+        "potiron"
+      ],
+      "deconseilles": [
+        "betterave",
+        "celeri",
+        "fenouil"
+      ]
+    },
+    {
+      "id": "radis",
+      "nom": "Radis",
+      "benefiques": [
+        "carotte",
+        "concombre",
+        "courgette",
+        "epinard",
+        "haricot",
+        "laitue",
+        "mache",
+        "melon",
+        "pois"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "chou",
+      "nom": "Chou",
+      "benefiques": [
+        "betterave",
+        "celeri",
+        "epinard",
+        "feve",
+        "pomme-de-terre"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "fraise",
+        "haricot"
+      ]
+    },
+    {
+      "id": "brocoli",
+      "nom": "Brocoli",
+      "benefiques": [
+        "betterave",
+        "celeri",
+        "feve",
+        "oignon"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "haricot"
+      ]
+    },
+    {
+      "id": "haricot",
+      "nom": "Haricot",
+      "benefiques": [
+        "artichaut",
+        "aubergine",
+        "carotte",
+        "concombre",
+        "courge",
+        "courgette",
+        "laitue",
+        "mais",
+        "pomme-de-terre",
+        "potiron",
+        "radis"
+      ],
+      "deconseilles": [
+        "ail",
+        "betterave",
+        "brocoli",
+        "chou",
+        "fenouil",
+        "navet",
+        "oignon",
+        "poireau"
+      ]
+    },
+    {
+      "id": "pois",
+      "nom": "Pois",
+      "benefiques": [
+        "artichaut",
+        "carotte",
+        "concombre",
+        "laitue",
+        "navet",
+        "radis"
+      ],
+      "deconseilles": [
+        "ail",
+        "fenouil",
+        "oignon"
+      ]
+    },
+    {
+      "id": "feve",
+      "nom": "Fève",
+      "benefiques": [
+        "brocoli",
+        "carotte",
+        "chou"
+      ],
+      "deconseilles": [
+        "ail",
+        "fenouil",
+        "oignon"
+      ]
+    },
+    {
+      "id": "carotte",
+      "nom": "Carotte",
+      "benefiques": [
+        "ail",
+        "chichoree",
+        "ciboulette",
+        "feve",
+        "haricot",
+        "laitue",
+        "mache",
+        "oignon",
+        "persil",
+        "poireau",
+        "pois",
+        "poivron",
+        "radis",
+        "tomate"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "persil",
+      "nom": "Persil",
+      "benefiques": [
+        "artichaut",
+        "aubergine",
+        "carotte",
+        "melon",
+        "tomate"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "fenouil",
+      "nom": "Fenouil",
+      "benefiques": [],
+      "deconseilles": [
+        "artichaut",
+        "aubergine",
+        "basilic",
+        "betterave",
+        "blette",
+        "brocoli",
+        "carotte",
+        "celeri",
+        "chichoree",
+        "chou",
+        "ciboulette",
+        "concombre",
+        "courge",
+        "courgette",
+        "epinard",
+        "feve",
+        "fraise",
+        "haricot",
+        "laitue",
+        "mache",
+        "mais",
+        "melon",
+        "navet",
+        "persil",
+        "pois",
+        "poivron",
+        "potiron",
+        "radis",
+        "tomate"
+      ]
+    },
+    {
+      "id": "oignon",
+      "nom": "Oignon",
+      "benefiques": [
+        "betterave",
+        "blette",
+        "brocoli",
+        "carotte",
+        "chichoree",
+        "ciboulette",
+        "fraise",
+        "laitue",
+        "poivron",
+        "tomate"
+      ],
+      "deconseilles": [
+        "feve",
+        "haricot",
+        "pois"
+      ]
+    },
+    {
+      "id": "ail",
+      "nom": "Ail",
+      "benefiques": [
+        "betterave",
+        "carotte",
+        "fraise",
+        "laitue",
+        "tomate"
+      ],
+      "deconseilles": [
+        "feve",
+        "haricot",
+        "pois"
+      ]
+    },
+    {
+      "id": "poireau",
+      "nom": "Poireau",
+      "benefiques": [
+        "carotte",
+        "celeri"
+      ],
+      "deconseilles": [
+        "haricot"
+      ]
+    },
+    {
+      "id": "laitue",
+      "nom": "Laitue",
+      "benefiques": [
+        "ail",
+        "betterave",
+        "blette",
+        "carotte",
+        "ciboulette",
+        "concombre",
+        "epinard",
+        "fraise",
+        "haricot",
+        "oignon",
+        "pois",
+        "radis"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "chichoree",
+      "nom": "Chicorée",
+      "benefiques": [
+        "carotte",
+        "oignon"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "epinard",
+      "nom": "Épinard",
+      "benefiques": [
+        "chou",
+        "laitue",
+        "navet",
+        "radis"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "blette",
+      "nom": "Blette",
+      "benefiques": [
+        "laitue",
+        "oignon"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "basilic",
+      "nom": "Basilic",
+      "benefiques": [
+        "aubergine",
+        "poivron",
+        "tomate"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "ciboulette",
+      "nom": "Ciboulette",
+      "benefiques": [
+        "carotte",
+        "laitue",
+        "oignon",
+        "tomate"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "celeri",
+      "nom": "Céleri",
+      "benefiques": [
+        "brocoli",
+        "chou",
+        "poireau"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "mais"
+      ]
+    },
+    {
+      "id": "betterave",
+      "nom": "Betterave",
+      "benefiques": [
+        "ail",
+        "brocoli",
+        "chou",
+        "laitue",
+        "oignon"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "haricot",
+        "mais"
+      ]
+    },
+    {
+      "id": "navet",
+      "nom": "Navet",
+      "benefiques": [
+        "epinard",
+        "pois"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "haricot"
+      ]
+    },
+    {
+      "id": "mache",
+      "nom": "Mâche",
+      "benefiques": [
+        "carotte",
+        "radis"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "pomme-de-terre",
+      "nom": "Pomme de terre",
+      "benefiques": [
+        "chou",
+        "haricot",
+        "mais"
+      ],
+      "deconseilles": [
+        "concombre",
+        "courge",
+        "courgette",
+        "melon",
+        "potiron",
+        "tomate"
+      ]
+    },
+    {
+      "id": "artichaut",
+      "nom": "Artichaut",
+      "benefiques": [
+        "haricot",
+        "persil",
+        "pois"
+      ],
+      "deconseilles": [
+        "fenouil"
+      ]
+    },
+    {
+      "id": "melon",
+      "nom": "Melon",
+      "benefiques": [
+        "mais",
+        "persil",
+        "radis"
+      ],
+      "deconseilles": [
+        "fenouil",
+        "pomme-de-terre"
+      ]
+    },
+    {
+      "id": "fraise",
+      "nom": "Fraise",
+      "benefiques": [
+        "ail",
+        "laitue",
+        "oignon"
+      ],
+      "deconseilles": [
+        "chou",
+        "fenouil"
+      ]
+    }
+  ]
+}
