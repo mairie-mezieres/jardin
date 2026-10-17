@@ -126,6 +126,10 @@ dialog p{color:#fff;margin-top:8px;text-align:center}
   <nav class="tabs" id="tabs" role="tablist" aria-label="Thèmes du concours"></nav>
 
   <main id="theme" style="display:grid;gap:18px"></main>
+
+  <footer class="row" style="justify-content:center;padding-top:24px">
+    <button type="button" id="orga-btn">Espace organisateur</button>
+  </footer>
 </div>
 
 <dialog id="lb"><img id="lb-img" alt=""><p id="lb-cap"></p></dialog>
@@ -142,7 +146,7 @@ const THEMES = [
 ];
 const PHASES = { depot: 'Dépôt des photos ouvert', vote: 'Vote ouvert', resultats: 'Résultats publiés' };
 const ETAPES = {
-  depot: 'Étape 1 sur 3 : déposez vos photos, une par thème. Le vote ouvrira ensuite, quand l’organisateur le lancera.',
+  depot: 'Étape 1 sur 3 : déposez vos photos, une par thème. Les photos des autres restent cachées jusqu’à l’ouverture du vote par l’organisateur.',
   vote: 'Étape 2 sur 3 : votez ! Dans chaque thème, appuyez sur « Voter pour celle-ci » sous votre photo préférée.',
   resultats: 'Étape 3 sur 3 : voici le classement de chaque thème.',
 };
@@ -156,9 +160,9 @@ let appareil = store.get('cp-appareil');
 if (!appareil) { appareil = crypto.randomUUID(); store.set('cp-appareil', appareil); }
 
 const S = {
-  phase: null, photos: [], mesVotes: {}, busy: false,
+  phase: null, photos: [], compte: null, mesVotes: {}, busy: false,
   theme: THEMES.some(t => t.id === store.get('cp-theme')) ? store.get('cp-theme') : THEMES[0].id,
-  secret: store.get('cp-orga'), decompte: null,
+  secret: store.get('cp-orga') || null, decompte: null, orga: false,
 };
 
 const $ = id => document.getElementById(id);
@@ -214,7 +218,7 @@ function render() {
 function renderTabs() {
   const tabs = $('tabs'); tabs.replaceChildren();
   THEMES.forEach(t => {
-    const nb = duTheme(t.id).length;
+    const nb = S.compte ? (S.compte[t.id] || 0) : duTheme(t.id).length;
     let done = null;
     if (S.phase === 'depot' && mienne(t.id)) done = el('span', { class: 'done' }, ' · déposée ✓');
     if (S.phase === 'vote' && S.mesVotes[t.id]) done = el('span', { class: 'done' }, ' · voté ✓');
@@ -259,9 +263,18 @@ function renderDepot(main, t) {
       el('label', { for: 'pseudo' }, 'Votre prénom'), pseudo,
       el('label', { for: 'leg-' + t.id }, 'Légende (facultative)'), leg,
       actions, status)));
-  const autres = duTheme(t.id).filter(x => !x.moi);
-  main.append(el('h3', {}, autres.length ? `Déjà déposées (${autres.length})` : 'Aucune autre photo pour l’instant'));
-  if (autres.length) main.append(grille(autres, t, false));
+  // Les photos des autres restent cachées pendant les dépôts ; seul l'organisateur
+  // les voit (via son décompte), pour pouvoir modérer avant l'ouverture du vote.
+  if (S.decompte) {
+    const autres = S.decompte.photos.filter(x => x.theme === t.id && x.id !== p?.id).map(x => ({ ...x, moi: false }));
+    main.append(el('h3', {}, autres.length ? `Photos des autres participants (${autres.length}) — visibles par vous seul` : 'Aucune autre photo pour l’instant'));
+    if (autres.length) main.append(grille(autres, t, false));
+  } else {
+    const nb = S.compte ? Math.max(0, (S.compte[t.id] || 0) - (p ? 1 : 0)) : duTheme(t.id).filter(x => !x.moi).length;
+    main.append(el('p', { class: 'notice' }, nb
+      ? `${nb} autre${nb > 1 ? 's' : ''} photo${nb > 1 ? 's' : ''} déjà déposée${nb > 1 ? 's' : ''}. Vous les découvrirez à l’ouverture du vote.`
+      : 'Aucune autre photo pour l’instant. Elles resteront cachées jusqu’à l’ouverture du vote.'));
+  }
 }
 
 function grille(ps, t, votable) {
@@ -312,7 +325,8 @@ function renderResultats(main, t) {
 }
 
 function renderAdmin() {
-  const visible = location.hash === '#orga' || !!S.secret;
+  const visible = S.orga || location.hash === '#orga' || !!S.secret;
+  $('orga-btn').hidden = visible;
   $('admin').hidden = !visible;
   if (!visible) return;
   $('admin-login').hidden = !!S.decompte;
@@ -335,10 +349,13 @@ function renderAdmin() {
 /* ── Données & actions ─────────────────────────────── */
 async function charger() {
   const etat = await rpc('concours_etat', { p_appareil: appareil });
-  S.phase = etat.phase; S.photos = etat.photos || []; S.mesVotes = etat.mes_votes || {};
+  S.phase = etat.phase; S.photos = etat.photos || []; S.compte = etat.compte || null; S.mesVotes = etat.mes_votes || {};
   if (S.secret) {
     try { S.decompte = await rpc('concours_admin_decompte', { p_secret: S.secret }); }
-    catch { S.decompte = null; }
+    catch (e) {
+      S.decompte = null; S.secret = null; S.orga = true; store.set('cp-orga', '');
+      $('admin-status').className = 'status err'; $('admin-status').textContent = 'Code organisateur refusé (' + msg(e) + '). Saisissez-le à nouveau.';
+    }
   }
   render();
 }
@@ -411,6 +428,11 @@ document.querySelectorAll('[data-phase]').forEach(b => b.addEventListener('click
     p === 'resultats' ? 'Résultats publiés.' : 'Étape changée : ' + PHASES[p] + '.');
 }));
 window.addEventListener('hashchange', renderAdmin);
+$('orga-btn').addEventListener('click', () => {
+  S.orga = true; renderAdmin();
+  $('admin').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('admin-code').focus({ preventScroll: true });
+});
 
 /* ── Démarrage ─────────────────────────────────────── */
 if (!sb) {

@@ -14,18 +14,20 @@ Les photos et les votes sont stockés sur **Supabase** (offre gratuite).
 3. **Project Settings → API** : copier la *Project URL* et la clé publique
    (*anon public* ou *publishable*) dans `concours/config.js`.
    ⛔ Jamais la clé *service_role* / *secret*.
-4. Publier sur `main` : la page est servie par GitHub Pages à `…/jardin/concours/`.
+4. Projet installé avant le 17/10/2026 : exécuter aussi `concours/supabase-maj-1.sql`
+   (photos des autres masquées pendant les dépôts).
+5. Publier sur `main` : la page est servie par GitHub Pages à `…/jardin/concours/`.
 
 ## Déroulé
 
 | Étape | Qui | Ce qui se passe |
 |---|---|---|
-| 1. Dépôt | tout le monde | Chacun dépose une photo par thème, avec son prénom et une légende facultative (remplaçable, retirable). |
+| 1. Dépôt | tout le monde | Chacun dépose une photo par thème, avec son prénom et une légende facultative (remplaçable, retirable). Chacun ne voit **que ses propres photos** (le serveur ne renvoie pas les autres) ; seul l'organisateur les voit toutes, pour modérer. |
 | 2. Vote | tout le monde | Une voix par thème, modifiable, jamais pour sa propre photo. Les auteurs sont anonymes. |
 | 3. Résultats | tout le monde | Classement par thème, avec les prénoms et le nombre de voix. |
 
-L'organisateur ouvre `…/concours/#orga`, saisit son code (mémorisé sur l'appareil) et
-change d'étape. Il voit aussi un décompte en direct et peut retirer une photo.
+L'organisateur appuie sur **« Espace organisateur »** en bas de page (ou ouvre `…/concours/#orga`),
+saisit son code (mémorisé sur l'appareil) et change d'étape. Il voit aussi un décompte en direct et peut retirer une photo.
 
 ## Limites connues
 
