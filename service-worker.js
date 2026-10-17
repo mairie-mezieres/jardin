@@ -1,7 +1,7 @@
 // service-worker.js — Potager Magique
 // Précache assets statiques + stale-while-revalidate pour Open-Meteo
 
-const CACHE_VERSION = 'pm-v6';
+const CACHE_VERSION = 'pm-v7';
 
 const STATIC_ASSETS = [
   '/',
@@ -59,9 +59,13 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   try {
     const url = new URL(event.request.url);
+    // Le concours photo (/concours/) et ses appels Supabase doivent rester en
+    // direct : en cache-first, photos et votes resteraient figés. On ne gère donc
+    // que les fichiers du potager et Open-Meteo.
+    if (url.pathname.includes('/concours/')) return;
     if (url.hostname === METEO_ORIGIN) {
       event.respondWith(staleWhileRevalidate(event.request));
-    } else {
+    } else if (url.origin === self.location.origin) {
       event.respondWith(cacheFirst(event.request));
     }
   } catch {
