@@ -62,7 +62,12 @@ begin
         'voix', case when v_phase = 'resultats'
                      then (select count(*) from concours_votes v where v.photo_id = p.id) end
       ) order by p.cree_le)
-      from concours_photos p), '[]'::json),
+      from concours_photos p
+      -- pendant les dépôts, chacun ne voit que ses propres photos
+      where v_phase <> 'depot' or p.appareil = p_appareil), '[]'::json),
+    'compte', coalesce((
+      select json_object_agg(theme, n) from (
+        select theme, count(*) as n from concours_photos group by theme) c), '{}'::json),
     'mes_votes', coalesce((
       select json_object_agg(theme, photo_id) from concours_votes where appareil = p_appareil), '{}'::json)
   );
@@ -131,6 +136,7 @@ begin
     'photos', coalesce((
       select json_agg(json_build_object(
         'id', p.id, 'theme', p.theme, 'pseudo', p.pseudo,
+        'chemin', p.chemin, 'legende', p.legende,
         'voix', (select count(*) from concours_votes v where v.photo_id = p.id)))
       from concours_photos p), '[]'::json));
 end $$;
