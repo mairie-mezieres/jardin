@@ -132,6 +132,10 @@ dialog p{color:#fff;margin-top:8px;text-align:center}
         <button type="button" class="primary" data-phase="resultats">3. Publier les résultats</button>
       </div>
       <div class="tbl" id="tally"></div>
+      <div class="row">
+        <button type="button" id="dl-all">📥 Télécharger toutes les photos</button>
+        <span class="muted" style="font-size:.85rem">Enregistrées dans « Téléchargements », visibles dans la galerie.</span>
+      </div>
     </div>
     <p class="status" id="admin-status" role="status"></p>
   </section>
@@ -442,6 +446,39 @@ function deposer(themeId, file, pseudo, legende, status) {
 function voter(themeId, photoId) {
   return action(() => rpc('concours_voter', { p_appareil: appareil, p_theme: themeId, p_photo_id: photoId }), null, null);
 }
+
+// Télécharge chaque photo (nommée thème-prénom-n°) : sur Android, elles arrivent
+// dans « Téléchargements », que la galerie affiche. Un lien `download` vers une autre
+// origine est ignoré par le navigateur : on passe donc par un blob local.
+$('dl-all').addEventListener('click', async () => {
+  const st = $('admin-status'), btn = $('dl-all');
+  const ps = S.decompte?.photos || [];
+  if (!ps.length) { st.className = 'status'; st.textContent = 'Aucune photo à télécharger.'; return; }
+  const propre = x => (x || 'anonyme').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'anonyme';
+  btn.disabled = true;
+  let ok = 0, ko = 0;
+  const vus = {};
+  for (const p of ps) {
+    st.className = 'status'; st.textContent = `Téléchargement ${ok + ko + 1} / ${ps.length}…`;
+    try {
+      const r = await fetch(urlPhoto(p.chemin));
+      if (!r.ok) throw new Error(r.status);
+      const blob = await r.blob();
+      const base = `concours-${p.theme}-${propre(p.pseudo)}`;
+      vus[base] = (vus[base] || 0) + 1;
+      const ext = (p.chemin.split('.').pop() || 'jpg').toLowerCase();
+      const a = el('a', { href: URL.createObjectURL(blob), download: `${base}${vus[base] > 1 ? '-' + vus[base] : ''}.${ext}` });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+      ok++;
+    } catch { ko++; }
+    await new Promise(r => setTimeout(r, 400));
+  }
+  btn.disabled = false;
+  st.className = 'status ' + (ko ? 'err' : 'ok');
+  st.textContent = `${ok} photo${ok > 1 ? 's' : ''} téléchargée${ok > 1 ? 's' : ''}` + (ko ? `, ${ko} en échec.` : '.') +
+    ' Si le navigateur demande d’autoriser plusieurs téléchargements, acceptez puis relancez.';
+});
 
 $('admin-login').addEventListener('submit', async e => {
   e.preventDefault();

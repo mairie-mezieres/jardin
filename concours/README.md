@@ -28,6 +28,8 @@ Les photos et les votes sont stockés sur **Supabase** (offre gratuite).
 
 L'organisateur appuie sur **« Espace organisateur »** en bas de page (ou ouvre `…/concours/#orga`),
 saisit son code (mémorisé sur l'appareil) et change d'étape. Il voit aussi un décompte en direct et peut retirer une photo.
+**« 📥 Télécharger toutes les photos »** les enregistre une à une (`concours-<thème>-<prénom>.jpg`) :
+sur Android, dans « Téléchargements », que la galerie affiche.
 
 ## Diaporama (télé)
 
