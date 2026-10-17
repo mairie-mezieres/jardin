@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Concours photo</title>
+<meta name="description" content="5 thèmes, une photo par thème, un vote par thème.">
+<meta property="og:title" content="Concours photo 📸">
+<meta property="og:description" content="Déposez vos photos et votez pour vos préférées : 5 thèmes, un vote par thème.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Affiche de kermesse : bandeau d'en-tête, onglets de thèmes, mur de tirages façon Polaroid. */
+:root{
+  --bg:#fff3bf; --ink:#1d1b3a; --muted:#57537a; --card:#ffffff; --line:rgba(29,27,58,.14);
+  --accent:#d6265f; --accent-ink:#ffffff; --ok:#1d7a4b; --ok-bg:#d9f2e3; --warn-bg:#ffe0e9;
+  --shadow:0 2px 0 rgba(29,27,58,.9);
+  --f-display:'Bricolage Grotesque',system-ui,sans-serif;
+  --f-body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#16152b; --ink:#f2efff; --muted:#aaa6cf; --card:#24223f; --line:rgba(242,239,255,.16);
+  --accent:#ff5c93; --accent-ink:#16152b; --ok:#6fdca3; --ok-bg:#173a2a; --warn-bg:#3d1a29;
+  --shadow:0 2px 0 rgba(0,0,0,.6); color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:1040px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:20px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.3rem,3.5vw,1.8rem);font-weight:800}
+h3{font-size:1.05rem;font-weight:500}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+.phase{display:inline-flex;gap:8px;align-items:center;border:2px solid var(--ink);border-radius:999px;padding:6px 14px;font-weight:700;background:var(--card);box-shadow:var(--shadow)}
+.phase i{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.phase[data-p="vote"] i{background:var(--ok)}
+.phase[data-p="resultats"] i{background:var(--ink)}
+.notice{border:2px dashed var(--line);border-radius:14px;padding:14px 16px;color:var(--muted)}
+.notice.err{border-style:solid;border-color:var(--accent);background:var(--warn-bg);color:var(--ink)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.tab{flex:0 0 auto;max-width:240px;text-align:left;font:inherit;font-weight:700;font-size:.9rem;line-height:1.25;color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;cursor:pointer;box-shadow:var(--shadow);display:grid;gap:4px}
+.tab small{font-weight:400;color:var(--muted);font-size:.75rem}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.tab[aria-selected="true"] small{color:var(--bg);opacity:.8}
+.tab .done{color:var(--ok)}
+.tab[aria-selected="true"] .done{color:var(--bg)}
+button,.btn{font:inherit;font-weight:700;cursor:pointer;border-radius:10px;border:2px solid var(--ink);padding:9px 14px;background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+button.primary,.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--ink)}
+button:disabled{opacity:.55;cursor:not-allowed}
+button:focus-visible,.btn:focus-within,input:focus-visible,.tab:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.theme-head{display:grid;gap:6px}
+.mine{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:18px;align-items:start;background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+@media (max-width:560px){.mine{grid-template-columns:1fr}}
+.mine form,.admin form{display:grid;gap:10px;min-width:0}
+label{font-weight:700;font-size:.9rem}
+input[type=text],input[type=password]{font:inherit;width:100%;padding:9px 11px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.file{position:relative;display:inline-block}
+.file input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.status{font-size:.9rem;min-height:1.4em}
+.status.ok{color:var(--ok)} .status.err{color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
+.polaroid{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:10px 10px 12px;box-shadow:0 6px 18px rgba(0,0,0,.12);display:grid;gap:8px;min-width:0;transition:transform .15s}
+.polaroid:nth-child(3n+1){transform:rotate(-1.2deg)} .polaroid:nth-child(3n+2){transform:rotate(.9deg)}
+.polaroid.chosen{outline:4px solid var(--ok);outline-offset:3px;transform:none}
+.ph{aspect-ratio:1;max-width:100%;width:100%;background:var(--line);border-radius:2px;cursor:zoom-in;display:block;border:0;padding:0;box-shadow:none;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.cap{font-size:.9rem;overflow-wrap:anywhere;min-height:1.4em}
+.placeholder{aspect-ratio:1;border:2px dashed var(--line);border-radius:6px;display:grid;place-items:center;text-align:center;color:var(--muted);padding:12px;font-size:.9rem}
+.tag{display:inline-block;justify-self:start;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--ok-bg);color:var(--ok)}
+.rank{display:grid;gap:14px;list-style:none;margin:0;padding:0}
+.rank-item{display:grid;grid-template-columns:3rem 96px minmax(0,1fr);gap:14px;align-items:center;background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:10px;box-shadow:var(--shadow)}
+.rank-item .pos{font-family:var(--f-display);font-weight:800;font-size:2rem;text-align:center;font-variant-numeric:tabular-nums}
+.rank-item .ph{width:96px}
+.rank-item .votes{font-variant-numeric:tabular-nums;color:var(--muted)}
+.admin{border:2px solid var(--ink);border-radius:16px;padding:16px;display:grid;gap:12px;background:var(--card)}
+.tally{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
+.tally td,.tally th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+.tally td:last-child,.tally th:last-child{text-align:right}
+.tbl{overflow-x:auto}
+dialog{border:0;padding:0;background:transparent;max-width:min(94vw,1100px)}
+dialog::backdrop{background:rgba(10,10,25,.85)}
+dialog img{max-height:86vh;display:block;border-radius:4px}
+dialog p{color:#fff;margin-top:8px;text-align:center}
+@media (prefers-reduced-motion:reduce){.polaroid{transition:none;transform:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div style="display:grid;gap:6px">
+      <span class="eyebrow">5 thèmes · 1 photo par thème · 1 vote par thème</span>
+      <h1>Concours photo</h1>
+    </div>
+    <span class="phase" id="phase" data-p="depot"><i></i><span id="phase-txt">Chargement…</span></span>
+  </header>
+
+  <p id="notice" class="notice" hidden></p>
+
+  <section class="admin" id="admin" hidden aria-labelledby="admin-h">
+    <h2 id="admin-h">Organisation</h2>
+    <form id="admin-login">
+      <label for="admin-code">Code organisateur</label>
+      <input type="password" id="admin-code" autocomplete="current-password">
+      <div class="row"><button type="submit" class="primary">Entrer</button></div>
+    </form>
+    <div id="admin-panel" hidden style="display:grid;gap:12px">
+      <p class="muted">Étapes : 1) dépôt des photos, 2) vote, 3) résultats. « Ouvrir le vote » ferme les dépôts et affiche les boutons de vote chez tout le monde.</p>
+      <div class="row">
+        <button type="button" data-phase="depot">1. Ouvrir les dépôts</button>
+        <button type="button" data-phase="vote">2. Ouvrir le vote</button>
+        <button type="button" class="primary" data-phase="resultats">3. Publier les résultats</button>
+      </div>
+      <div class="tbl" id="tally"></div>
+    </div>
+    <p class="status" id="admin-status" role="status"></p>
+  </section>
+
+  <p id="etape" class="notice"></p>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Thèmes du concours"></nav>
+
+  <main id="theme" style="display:grid;gap:18px"></main>
+</div>
+
+<dialog id="lb"><img id="lb-img" alt=""><p id="lb-cap"></p></dialog>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const THEMES = [
+  { id: 'biere',  titre: 'Putain le patron a augmenté le prix de la bière' },
+  { id: 'tutu',   titre: 'Tutu porté et ballerines aux pieds' },
+  { id: 'celine', titre: "T'as eu tes places pour Céline" },
+  { id: 'cliche', titre: 'Le cliché du bon français' },
+  { id: 'blocus', titre: 'Chef de blocus' },
+];
+const PHASES = { depot: 'Dépôt des photos ouvert', vote: 'Vote ouvert', resultats: 'Résultats publiés' };
+const ETAPES = {
+  depot: 'Étape 1 sur 3 : déposez vos photos, une par thème. Le vote ouvrira ensuite, quand l’organisateur le lancera.',
+  vote: 'Étape 2 sur 3 : votez ! Dans chaque thème, appuyez sur « Voter pour celle-ci » sous votre photo préférée.',
+  resultats: 'Étape 3 sur 3 : voici le classement de chaque thème.',
+};
+
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+};
+// Identifiant anonyme de l'appareil : c'est lui qui « possède » les photos et les votes.
+let appareil = store.get('cp-appareil');
+if (!appareil) { appareil = crypto.randomUUID(); store.set('cp-appareil', appareil); }
+
+const S = {
+  phase: null, photos: [], mesVotes: {}, busy: false,
+  theme: THEMES.some(t => t.id === store.get('cp-theme')) ? store.get('cp-theme') : THEMES[0].id,
+  secret: store.get('cp-orga'), decompte: null,
+};
+
+const $ = id => document.getElementById(id);
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else if (v === true) n.setAttribute(k, '');
+    else if (v !== false && v != null) n.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null) n.append(c);
+  return n;
+};
+function notice(text, err = false) { const n = $('notice'); n.hidden = !text; n.textContent = text || ''; n.classList.toggle('err', err); }
+function msg(e) { return (e && (e.message || e.error_description)) || 'Échec. Vérifiez la connexion et réessayez.'; }
+
+const cfg = window.CONCOURS_CONFIG || {};
+const sb = cfg.supabaseUrl && cfg.supabaseKey && window.supabase
+  ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey, { auth: { persistSession: false } })
+  : null;
+const urlPhoto = chemin => sb.storage.from('concours').getPublicUrl(chemin).data.publicUrl;
+async function rpc(fn, args) {
+  const { data, error } = await sb.rpc(fn, args);
+  if (error) throw error;
+  return data;
+}
+
+const mienne = t => S.photos.find(p => p.theme === t && p.moi) || null;
+const duTheme = t => S.photos.filter(p => p.theme === t);
+
+// Ordre propre à chaque appareil, pour ne pas avantager la première photo.
+function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+const melange = (ps, sel) => ps.slice().sort((a, b) => hash(sel + a.id) - hash(sel + b.id));
+
+function zoom(p) {
+  $('lb-img').src = urlPhoto(p.chemin); $('lb-img').alt = p.legende || 'Photo du concours';
+  $('lb-cap').textContent = p.legende || '';
+  $('lb').showModal();
+}
+$('lb').addEventListener('click', () => $('lb').close());
+const photoBtn = p => el('button', { type: 'button', class: 'ph', 'aria-label': 'Agrandir la photo', onclick: () => zoom(p) },
+  el('img', { src: urlPhoto(p.chemin), alt: p.legende || 'Photo du concours', loading: 'lazy' }));
+
+/* ── Rendu ─────────────────────────────────────────── */
+function render() {
+  if (!S.phase) return;
+  $('phase').dataset.p = S.phase; $('phase-txt').textContent = PHASES[S.phase];
+  $('etape').textContent = ETAPES[S.phase];
+  renderTabs(); renderTheme(); renderAdmin();
+}
+
+function renderTabs() {
+  const tabs = $('tabs'); tabs.replaceChildren();
+  THEMES.forEach(t => {
+    const nb = duTheme(t.id).length;
+    let done = null;
+    if (S.phase === 'depot' && mienne(t.id)) done = el('span', { class: 'done' }, ' · déposée ✓');
+    if (S.phase === 'vote' && S.mesVotes[t.id]) done = el('span', { class: 'done' }, ' · voté ✓');
+    tabs.append(el('button', {
+      type: 'button', class: 'tab', role: 'tab', 'aria-selected': String(t.id === S.theme),
+      onclick: () => { S.theme = t.id; store.set('cp-theme', t.id); render(); },
+    }, t.titre, el('small', {}, nb + (nb > 1 ? ' photos' : ' photo'), done)));
+  });
+}
+
+function renderTheme() {
+  const t = THEMES.find(x => x.id === S.theme);
+  const main = $('theme'); main.replaceChildren(
+    el('div', { class: 'theme-head' }, el('span', { class: 'eyebrow' }, 'Thème'), el('h2', {}, t.titre)));
+  if (S.phase === 'depot') renderDepot(main, t);
+  else if (S.phase === 'vote') renderVote(main, t);
+  else renderResultats(main, t);
+}
+
+function renderDepot(main, t) {
+  const p = mienne(t.id);
+  const status = el('p', { class: 'status', id: 'up-status', role: 'status' });
+  const pseudo = el('input', { type: 'text', id: 'pseudo', maxlength: '40', autocomplete: 'given-name', placeholder: 'Ex. : Juliette', value: store.get('cp-pseudo') || '' });
+  const leg = el('input', { type: 'text', id: 'leg-' + t.id, maxlength: '80', placeholder: 'Ex. : « Le demi à 9 € »', value: p?.legende || '' });
+  const file = el('input', { type: 'file', id: 'file-' + t.id, accept: 'image/*', disabled: S.busy, 'aria-label': 'Choisir une photo' });
+  file.addEventListener('change', () => {
+    const f = file.files[0]; file.value = '';
+    if (f) deposer(t.id, f, pseudo.value, leg.value, status);
+  });
+  const actions = el('div', { class: 'row' },
+    el('span', { class: 'btn primary file' }, p ? 'Remplacer ma photo' : 'Choisir ma photo', file));
+  if (p) {
+    actions.append(el('button', { type: 'button', disabled: S.busy, onclick: () => action(() => rpc('concours_legende', { p_appareil: appareil, p_theme: t.id, p_legende: leg.value }), status, 'Légende enregistrée.') }, 'Enregistrer la légende'));
+    actions.append(el('button', { type: 'button', disabled: S.busy, onclick: () => action(() => rpc('concours_retirer', { p_appareil: appareil, p_theme: t.id }), status, 'Photo retirée.') }, 'Retirer'));
+  }
+  main.append(el('div', { class: 'mine' },
+    p ? el('div', { class: 'polaroid' }, photoBtn(p), el('p', { class: 'cap' }, p.legende || ''))
+      : el('div', { class: 'placeholder' }, 'Votre photo pour ce thème apparaîtra ici'),
+    el('form', { onsubmit: e => e.preventDefault() },
+      el('h3', {}, p ? 'Votre photo est déposée' : 'Déposer votre photo'),
+      el('p', { class: 'muted' }, 'Une photo par personne et par thème. Votre prénom ne sera dévoilé qu’aux résultats.'),
+      el('label', { for: 'pseudo' }, 'Votre prénom'), pseudo,
+      el('label', { for: 'leg-' + t.id }, 'Légende (facultative)'), leg,
+      actions, status)));
+  const autres = duTheme(t.id).filter(x => !x.moi);
+  main.append(el('h3', {}, autres.length ? `Déjà déposées (${autres.length})` : 'Aucune autre photo pour l’instant'));
+  if (autres.length) main.append(grille(autres, t, false));
+}
+
+function grille(ps, t, votable) {
+  const g = el('div', { class: 'grid' });
+  melange(ps, appareil + t.id).forEach(p => {
+    const chosen = votable && S.mesVotes[t.id] === p.id;
+    const card = el('div', { class: 'polaroid' + (chosen ? ' chosen' : '') }, photoBtn(p), el('p', { class: 'cap' }, p.legende || ''));
+    if (votable) {
+      if (p.moi) card.append(el('span', { class: 'tag' }, 'Votre photo'));
+      else card.append(el('button', {
+        type: 'button', class: chosen ? '' : 'primary', disabled: S.busy, 'aria-pressed': String(chosen),
+        onclick: () => voter(t.id, chosen ? null : p.id),
+      }, chosen ? 'Mon vote ✓ (annuler)' : 'Voter pour celle-ci'));
+    }
+    if (S.decompte && S.phase !== 'resultats') {
+      card.append(el('button', { type: 'button', disabled: S.busy, onclick: () => action(() => rpc('concours_admin_retirer', { p_secret: S.secret, p_photo_id: p.id }), null, null) }, 'Retirer (modération)'));
+    }
+    g.append(card);
+  });
+  return g;
+}
+
+function renderVote(main, t) {
+  const ps = duTheme(t.id);
+  if (!ps.length) { main.append(el('p', { class: 'notice' }, 'Personne n’a déposé de photo sur ce thème.')); return; }
+  main.append(el('p', { class: 'muted' }, S.mesVotes[t.id]
+    ? 'Votre vote est enregistré. Vous pouvez le changer tant que le vote est ouvert.'
+    : 'Choisissez votre photo préférée. Les auteurs restent anonymes jusqu’aux résultats.'));
+  main.append(grille(ps, t, true));
+}
+
+function renderResultats(main, t) {
+  const ps = duTheme(t.id).filter(p => p.voix > 0).sort((a, b) => b.voix - a.voix);
+  if (!ps.length) { main.append(el('p', { class: 'notice' }, 'Aucun vote sur ce thème.')); return; }
+  const list = el('ol', { class: 'rank' });
+  let pos = 0, prev = null;
+  ps.forEach((p, i) => {
+    if (p.voix !== prev) { pos = i + 1; prev = p.voix; }
+    list.append(el('li', { class: 'rank-item' },
+      el('span', { class: 'pos', 'aria-label': 'Place ' + pos }, String(pos)),
+      photoBtn(p),
+      el('div', { style: 'display:grid;gap:2px;min-width:0' },
+        el('strong', {}, p.pseudo || 'Anonyme'),
+        p.legende ? el('span', { class: 'cap' }, p.legende) : null,
+        el('span', { class: 'votes' }, p.voix + ' voix'))));
+  });
+  main.append(list);
+}
+
+function renderAdmin() {
+  const visible = location.hash === '#orga' || !!S.secret;
+  $('admin').hidden = !visible;
+  if (!visible) return;
+  $('admin-login').hidden = !!S.decompte;
+  $('admin-panel').hidden = !S.decompte;
+  if (!S.decompte) return;
+  document.querySelectorAll('[data-phase]').forEach(b => b.disabled = S.busy || (b.dataset.phase === S.phase && S.phase !== 'resultats'));
+  const tb = el('table', { class: 'tally' }, el('thead', {}, el('tr', {}, el('th', {}, 'Thème'), el('th', {}, 'Photos'), el('th', {}, 'En tête'), el('th', {}, 'Voix'))));
+  const body = el('tbody');
+  THEMES.forEach(t => {
+    const ps = S.decompte.photos.filter(p => p.theme === t.id).sort((a, b) => b.voix - a.voix);
+    const top = ps[0]?.voix ? ps[0] : null;
+    body.append(el('tr', {}, el('td', {}, t.titre), el('td', {}, String(ps.length)),
+      el('td', {}, top ? top.pseudo : '—'), el('td', {}, top ? String(top.voix) : '0')));
+  });
+  tb.append(body);
+  $('tally').replaceChildren(el('p', { class: 'muted', style: 'margin-bottom:6px' },
+    `Décompte en direct (visible par vous seul) · ${S.decompte.votants} votant${S.decompte.votants > 1 ? 's' : ''}`), tb);
+}
+
+/* ── Données & actions ─────────────────────────────── */
+async function charger() {
+  const etat = await rpc('concours_etat', { p_appareil: appareil });
+  S.phase = etat.phase; S.photos = etat.photos || []; S.mesVotes = etat.mes_votes || {};
+  if (S.secret) {
+    try { S.decompte = await rpc('concours_admin_decompte', { p_secret: S.secret }); }
+    catch { S.decompte = null; }
+  }
+  render();
+}
+
+async function action(fn, status, ok, pending) {
+  if (S.busy) return;
+  S.busy = true; render();
+  const enCours = status && $(status.id);
+  if (enCours && pending) { enCours.className = 'status'; enCours.textContent = pending; }
+  let fin = ok, err = false;
+  try {
+    await fn(); await charger();
+  } catch (e) {
+    await charger().catch(() => {});
+    fin = msg(e); err = true;
+  }
+  S.busy = false; render();
+  const st = status && $(status.id);
+  if (st && fin) { st.className = 'status ' + (err ? 'err' : 'ok'); st.textContent = fin; }
+  else if (err) notice(fin, true);
+}
+
+async function compresser(file) {
+  try {
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    bmp.close?.();
+    const b = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.85));
+    if (b) return b;
+  } catch {}
+  if (['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) return file;
+  throw new Error('Format de photo non pris en charge. Envoyez un JPEG ou un PNG.');
+}
+
+function deposer(themeId, file, pseudo, legende, status) {
+  pseudo = pseudo.trim();
+  if (!pseudo) { status.className = 'status err'; status.textContent = 'Indiquez votre prénom avant de choisir la photo.'; $('pseudo').focus(); return; }
+  store.set('cp-pseudo', pseudo);
+  return action(async () => {
+    const blob = await compresser(file);
+    const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/webp' ? 'webp' : 'jpg';
+    const chemin = `${themeId}/${crypto.randomUUID()}.${ext}`;
+    const { error } = await sb.storage.from('concours').upload(chemin, blob, { contentType: blob.type || 'image/jpeg' });
+    if (error) throw error;
+    await rpc('concours_deposer', { p_appareil: appareil, p_theme: themeId, p_pseudo: pseudo, p_legende: legende, p_chemin: chemin });
+  }, status, 'Photo déposée.', 'Envoi de la photo…');
+}
+
+function voter(themeId, photoId) {
+  return action(() => rpc('concours_voter', { p_appareil: appareil, p_theme: themeId, p_photo_id: photoId }), null, null);
+}
+
+$('admin-login').addEventListener('submit', async e => {
+  e.preventDefault();
+  const code = $('admin-code').value;
+  try {
+    S.decompte = await rpc('concours_admin_decompte', { p_secret: code });
+    S.secret = code; store.set('cp-orga', code);
+    $('admin-status').className = 'status'; $('admin-status').textContent = '';
+    render();
+  } catch (err) { $('admin-status').className = 'status err'; $('admin-status').textContent = msg(err); }
+});
+document.querySelectorAll('[data-phase]').forEach(b => b.addEventListener('click', () => {
+  const p = b.dataset.phase;
+  $('admin-status').className = 'status'; $('admin-status').textContent = '';
+  action(() => rpc('concours_admin_phase', { p_secret: S.secret, p_phase: p }), $('admin-status'),
+    p === 'resultats' ? 'Résultats publiés.' : 'Étape changée : ' + PHASES[p] + '.');
+}));
+window.addEventListener('hashchange', renderAdmin);
+
+/* ── Démarrage ─────────────────────────────────────── */
+if (!sb) {
+  notice('Le concours n’est pas encore configuré (voir concours/README.md).', true);
+  $('phase-txt').textContent = 'Non configuré';
+} else {
+  charger().catch(e => notice('Impossible de charger le concours : ' + msg(e), true));
+  // Les autres participants déposent et votent en parallèle : on rafraîchit au retour sur la page.
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !S.busy) charger().catch(() => {}); });
+  setInterval(() => { if (!document.hidden && !S.busy) charger().catch(() => {}); }, 30000);
+}
+</script>
+</body>
+</html>
