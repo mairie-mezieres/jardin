@@ -29,6 +29,14 @@ Les photos et les votes sont stockés sur **Supabase** (offre gratuite).
 L'organisateur appuie sur **« Espace organisateur »** en bas de page (ou ouvre `…/concours/#orga`),
 saisit son code (mémorisé sur l'appareil) et change d'étape. Il voit aussi un décompte en direct et peut retirer une photo.
 
+## Diaporama (télé)
+
+Bouton **« ▶ Diaporama de ce thème »** sur chaque thème : plein écran sombre, une photo toutes
+les 7 s, précédée d'une page titre. Pendant le vote, les photos défilent anonymes ; aux
+résultats, de la dernière à la première place, avec prénom et voix. Pendant les dépôts, seul
+l'organisateur peut le lancer. Clavier : ← →, Espace (pause), F (plein écran), Échap.
+Les boutons s'effacent après 3 s d'inactivité.
+
 ## Limites connues
 
 - **Un participant = un appareil.** L'identité est un identifiant aléatoire gardé dans le

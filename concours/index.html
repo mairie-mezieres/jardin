@@ -87,7 +87,22 @@ dialog{border:0;padding:0;background:transparent;max-width:min(94vw,1100px)}
 dialog::backdrop{background:rgba(10,10,25,.85)}
 dialog img{max-height:86vh;display:block;border-radius:4px}
 dialog p{color:#fff;margin-top:8px;text-align:center}
-@media (prefers-reduced-motion:reduce){.polaroid{transition:none;transform:none!important}}
+/* Diaporama télé : toujours sombre, quel que soit le thème de l'appareil. */
+.diapo{position:fixed;inset:0;z-index:50;background:#0b0a16;color:#f6f3ff;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:12px;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));color-scheme:dark}
+.d-top{display:flex;justify-content:space-between;gap:16px;align-items:baseline;font-family:var(--f-display);font-size:clamp(1rem,2.2vw,1.6rem);font-weight:800}
+.d-top span:last-child{font-variant-numeric:tabular-nums;color:#b9b4dc;font-weight:500;white-space:nowrap}
+.d-stage{display:grid;place-items:center;min-height:0}
+.d-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,.6);transition:opacity .4s}
+.d-stage img.out{opacity:0}
+.d-titre{font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,7vw,6rem);text-align:center;text-wrap:balance;line-height:1.05;max-width:18ch}
+.d-info{text-align:center;display:grid;gap:4px;min-height:2.4em}
+.d-place{font-family:var(--f-display);font-weight:800;font-size:clamp(1.4rem,3.5vw,3rem);color:#ffd43b}
+.d-cap{font-size:clamp(1rem,2.4vw,1.8rem)}
+.d-ctrl{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;transition:opacity .3s}
+.d-ctrl button{background:#24223f;color:#f6f3ff;border-color:#f6f3ff;box-shadow:none}
+.diapo.idle .d-ctrl{opacity:0}
+.diapo.idle{cursor:none}
+@media (prefers-reduced-motion:reduce){.polaroid{transition:none;transform:none!important}.d-stage img{transition:none}}
 </style>
 </head>
 <body>
@@ -133,6 +148,19 @@ dialog p{color:#fff;margin-top:8px;text-align:center}
 </div>
 
 <dialog id="lb"><img id="lb-img" alt=""><p id="lb-cap"></p></dialog>
+
+<div id="diapo" class="diapo" hidden role="dialog" aria-modal="true" aria-label="Diaporama">
+  <div class="d-top"><span id="d-theme"></span><span id="d-count"></span></div>
+  <div class="d-stage" id="d-stage"></div>
+  <div class="d-info" aria-live="polite"><p class="d-place" id="d-place"></p><p class="d-cap" id="d-cap"></p></div>
+  <div class="d-ctrl">
+    <button type="button" id="d-prev" aria-label="Photo précédente">◀</button>
+    <button type="button" id="d-play">Pause</button>
+    <button type="button" id="d-next" aria-label="Photo suivante">▶</button>
+    <button type="button" id="d-fs">Plein écran</button>
+    <button type="button" id="d-close">Fermer</button>
+  </div>
+</div>
 
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -233,6 +261,10 @@ function renderTheme() {
   const t = THEMES.find(x => x.id === S.theme);
   const main = $('theme'); main.replaceChildren(
     el('div', { class: 'theme-head' }, el('span', { class: 'eyebrow' }, 'Thème'), el('h2', {}, t.titre)));
+  const nbDiapo = diapoPhotos(t).length;
+  if (nbDiapo) main.append(el('div', { class: 'row' },
+    el('button', { type: 'button', class: 'primary', onclick: () => ouvrirDiapo(t) }, '▶ Diaporama de ce thème'),
+    el('span', { class: 'muted' }, `${nbDiapo} photo${nbDiapo > 1 ? 's' : ''} · idéal sur la télé`)));
   if (S.phase === 'depot') renderDepot(main, t);
   else if (S.phase === 'vote') renderVote(main, t);
   else renderResultats(main, t);
@@ -432,6 +464,94 @@ $('orga-btn').addEventListener('click', () => {
   S.orga = true; renderAdmin();
   $('admin').scrollIntoView({ behavior: 'smooth', block: 'start' });
   $('admin-code').focus({ preventScroll: true });
+});
+
+/* ── Diaporama (télé) ──────────────────────────────── */
+// Photos montrées : pendant les dépôts, seul l'organisateur en a (son décompte) ;
+// pendant le vote, toutes, anonymes, dans l'ordre mélangé de l'appareil ;
+// aux résultats, de la dernière à la première place, pour le suspense.
+function diapoPhotos(t) {
+  if (S.phase === 'depot') return S.decompte ? S.decompte.photos.filter(p => p.theme === t.id) : [];
+  if (S.phase === 'vote') return melange(duTheme(t.id), appareil + t.id);
+  const desc = duTheme(t.id).slice().sort((a, b) => (b.voix || 0) - (a.voix || 0));
+  let pos = 0, prev = null;
+  const classes = desc.map((p, i) => { if (p.voix !== prev) { pos = i + 1; prev = p.voix; } return { ...p, place: pos }; });
+  return classes.reverse();
+}
+
+const D = { t: null, slides: [], i: 0, timer: null, play: true, idle: null, lock: null };
+const DUREE = 7000;
+
+function ouvrirDiapo(t) {
+  D.t = t; D.i = 0; D.play = true;
+  D.slides = [{ titre: true }, ...diapoPhotos(t)];
+  $('d-theme').textContent = t.titre;
+  $('diapo').hidden = false;
+  document.body.style.overflow = 'hidden';
+  try { navigator.wakeLock?.request('screen').then(l => D.lock = l).catch(() => {}); } catch {}
+  afficherDiapo(); programmer(); reveil();
+  $('d-next').focus();
+}
+function fermerDiapo() {
+  clearTimeout(D.timer); clearTimeout(D.idle);
+  $('diapo').hidden = true; document.body.style.overflow = '';
+  D.lock?.release?.().catch(() => {}); D.lock = null;
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+}
+function afficherDiapo() {
+  const sl = D.slides[D.i], stage = $('d-stage');
+  const n = D.slides.length - 1;
+  $('d-count').textContent = sl.titre ? `${n} photo${n > 1 ? 's' : ''}` : `${D.i} / ${n}`;
+  if (sl.titre) {
+    stage.replaceChildren(el('p', { class: 'd-titre' }, D.t.titre));
+    $('d-place').textContent = S.phase === 'resultats' ? 'Les résultats' : '';
+    $('d-cap').textContent = '';
+  } else {
+    const img = el('img', { src: urlPhoto(sl.chemin), alt: sl.legende || 'Photo du concours', class: 'out' });
+    img.addEventListener('load', () => img.classList.remove('out'));
+    img.addEventListener('error', () => img.classList.remove('out'));
+    stage.replaceChildren(img);
+    $('d-place').textContent = S.phase === 'resultats'
+      ? `${sl.place === 1 ? '🏆 ' : ''}${sl.place}${sl.place === 1 ? 'ʳᵉ' : 'ᵉ'} place · ${sl.pseudo || 'Anonyme'} · ${sl.voix || 0} voix`
+      : (S.phase === 'depot' && sl.pseudo ? sl.pseudo : '');
+    $('d-cap').textContent = sl.legende || '';
+  }
+  // précharge la suivante
+  const nx = D.slides[(D.i + 1) % D.slides.length];
+  if (nx && !nx.titre) new Image().src = urlPhoto(nx.chemin);
+}
+function programmer() {
+  clearTimeout(D.timer);
+  $('d-play').textContent = D.play ? 'Pause' : 'Lecture';
+  if (D.play) D.timer = setTimeout(() => aller(1), DUREE);
+}
+function aller(sens) {
+  D.i = (D.i + sens + D.slides.length) % D.slides.length;
+  afficherDiapo(); programmer();
+}
+// Les boutons s'effacent après 3 s sans bouger : rien ne gêne la photo sur la télé.
+function reveil() {
+  $('diapo').classList.remove('idle');
+  clearTimeout(D.idle);
+  D.idle = setTimeout(() => $('diapo').classList.add('idle'), 3000);
+}
+$('d-prev').onclick = () => aller(-1);
+$('d-next').onclick = () => aller(1);
+$('d-play').onclick = () => { D.play = !D.play; programmer(); };
+$('d-close').onclick = fermerDiapo;
+$('d-fs').onclick = () => {
+  const d = $('diapo');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else (d.requestFullscreen || d.webkitRequestFullscreen)?.call(d)?.catch?.(() => {});
+};
+['mousemove', 'touchstart', 'keydown'].forEach(ev => $('diapo').addEventListener(ev, reveil));
+document.addEventListener('keydown', e => {
+  if ($('diapo').hidden) return;
+  if (e.key === 'ArrowRight') aller(1);
+  else if (e.key === 'ArrowLeft') aller(-1);
+  else if (e.key === ' ') { e.preventDefault(); D.play = !D.play; programmer(); }
+  else if (e.key === 'Escape' && !document.fullscreenElement) fermerDiapo();
+  else if (e.key === 'f') $('d-fs').click();
 });
 
 /* ── Démarrage ─────────────────────────────────────── */
